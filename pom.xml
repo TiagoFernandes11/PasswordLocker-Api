@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.OurBank</groupId>
-	<artifactId>OurBankApi</artifactId>
+	<artifactId>PasswordLocker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>OurBankApi</name>
+	<name>PasswordLocker</name>
 	<description>Projeto PI senac</description>
 	<properties>
 		<java.version>17</java.version>

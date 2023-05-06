@@ -14,6 +14,9 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.br.CPF;
 
+import lombok.Data;
+
+@Data
 @Entity
 @Table(name = "TB_USER")
 public class UserModel implements Serializable{
@@ -21,7 +24,7 @@ public class UserModel implements Serializable{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @NotEmpty(message = "O nome é obrigatório!")
     @Size(min=2, message="O nome deve, no mínimo, ter 3 caracteres")
@@ -33,7 +36,7 @@ public class UserModel implements Serializable{
     @Column(name = "email", length = 80, nullable = false)
     private String email;
 
-    @CPF
+    //@CPF
     @NotEmpty(message = "O CPF é obrigatório!")
     @Column(name = "cpf", length = 11)
     private String cpf;
@@ -43,7 +46,8 @@ public class UserModel implements Serializable{
     @Column(name = "senha", columnDefinition = "TEXT", nullable = false)
     private String senha;
 
-    @NotEmpty(message = "A data de nascimento é obrigatória!")
-    @Column(name = "data_nasc", nullable = false)
+    @NotEmpty(message = "O numero de telefone é obrigatória!")
+    @Column(name = "telefone", nullable = false)
     private String telefone;
+
 }
