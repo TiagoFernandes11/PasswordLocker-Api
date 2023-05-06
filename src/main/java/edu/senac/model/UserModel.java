@@ -36,7 +36,7 @@ public class UserModel implements Serializable{
     @Column(name = "email", length = 80, nullable = false)
     private String email;
 
-    @CPF
+    //@CPF
     @NotEmpty(message = "O CPF é obrigatório!")
     @Column(name = "cpf", length = 11)
     private String cpf;
