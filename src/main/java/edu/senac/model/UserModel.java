@@ -12,6 +12,10 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+<<<<<<< HEAD
+=======
+//import org.hibernate.validator.constraints.br.CPF;
+>>>>>>> d8a2509bb66532a90ffdca8d0da1b84723ff8a40
 
 import lombok.Data;
 
