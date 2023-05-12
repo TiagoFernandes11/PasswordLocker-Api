@@ -1,4 +1,4 @@
-package edu.senac.model;
+package edu.senac.demo.model;
 
 import java.io.Serializable;
 
@@ -11,46 +11,40 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
-<<<<<<< HEAD
-=======
-//import org.hibernate.validator.constraints.br.CPF;
->>>>>>> d8a2509bb66532a90ffdca8d0da1b84723ff8a40
-
 import lombok.Data;
 
 @Data
 @Entity
 @Table(name = "TB_USER")
-public class UserModel implements Serializable{
+public class UserModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_USER")
     private Long id;
 
     @NotEmpty(message = "O nome é obrigatório!")
-    @Size(min=2, message="O nome deve, no mínimo, ter 3 caracteres")
-    @Column(name = "nome", length = 50, nullable = false)
+    @Size(min = 2, message = "O nome deve, no mínimo, ter 3 caracteres")
+    @Column(name = "NOME", length = 50, nullable = false)
     private String nome;
 
-    @Email(message="Insira um e-mail válido!")
-    @NotEmpty(message = "O e-mail é obrigatório!")
-    @Column(name = "email", length = 80, nullable = false)
-    private String email;
-
-    //@CPF
     @NotEmpty(message = "O CPF é obrigatório!")
-    @Column(name = "cpf", length = 11)
+    @Column(name = "CPF", length = 11, nullable = false)
     private String cpf;
 
-    @Size(min=5, message="A senha deve, no mínimo, ter 5 caracteres")
+    @Email(message = "Insira um e-mail válido!")
+    @NotEmpty(message = "O e-mail é obrigatório!")
+    @Column(name = "EMAIL", length = 80, nullable = false)
+    private String email;
+
+    @Size(min = 5, message = "A senha deve, no mínimo, ter 5 caracteres")
     @NotEmpty(message = "A senha é obrigatória!")
-    @Column(name = "senha", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "SENHA", length = 100, columnDefinition = "TEXT", nullable = false)
     private String senha;
 
     @NotEmpty(message = "O numero de telefone é obrigatória!")
-    @Column(name = "telefone", nullable = false)
+    @Column(name = "TELEFONE", length = 14, nullable = false)
     private String telefone;
 
 }
