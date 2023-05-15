@@ -1,20 +1,70 @@
 package edu.senac.demo.service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import edu.senac.demo.model.SenhaModel;
+import edu.senac.demo.model.UpdatePasswordModel;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import edu.senac.demo.repository.PasswordRepository;
+import edu.senac.demo.tools.DateAdministrator;
 
 @Service
 public class PasswordService {
 
     private PasswordRepository passwordRepository;
+    private PasswordEncoder passwordEncoder;
+    private DateAdministrator dateAdministrator;
 
     public PasswordService(PasswordRepository passwordRepository) {
         this.passwordRepository = passwordRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
-    public List<SenhaModel> buscarSenharDeUsuario(int idUser) {
+    public List<SenhaModel> findUserPasswords(String idUser) {
         return passwordRepository.findSenhasByIdUser(idUser);
     }
+
+    public SenhaModel insert(SenhaModel senha) throws ParseException {
+        String titulo = senha.getTitulo().toUpperCase();
+        senha.setTitulo(titulo);
+
+        String encoder = this.passwordEncoder.encode(senha.getSenha());
+        senha.setSenha(encoder);
+
+        Date currentDate = dateAdministrator.currentDate();
+        senha.setDataCriacao(currentDate);
+
+        passwordRepository.save(senha);
+        return senha;
+    }
+
+    public SenhaModel findByGuidId(String idPass) {
+        return passwordRepository.findByGuidId(idPass);
+    }
+
+    public SenhaModel deleteById(String idPass) {
+        SenhaModel senhaDelete = findByGuidId(idPass);
+        passwordRepository.deleteById(idPass);
+        return senhaDelete;
+    }
+
+    public boolean updatePassword(String idSenha, UpdatePasswordModel data) throws ParseException {
+        SenhaModel passwordAtt = findByGuidId(idSenha);
+
+        String upperTitulo = data.getTitulo().toUpperCase();
+        String encoder = passwordEncoder.encode(data.getSenha());
+        Date dateNow = dateAdministrator.currentDate();
+
+        passwordAtt.setTitulo(upperTitulo);
+        passwordAtt.setSenha(encoder);
+        passwordAtt.setDataAlteracao(dateNow);
+
+        passwordRepository.save(passwordAtt);
+        return true;
+    }
+
 }

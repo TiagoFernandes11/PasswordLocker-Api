@@ -7,10 +7,19 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import edu.senac.demo.model.SenhaModel;
 
-public interface PasswordRepository extends JpaRepository<SenhaModel, Integer>, JpaSpecificationExecutor<SenhaModel> {
+public interface PasswordRepository extends JpaRepository<SenhaModel, String>, JpaSpecificationExecutor<SenhaModel> {
 
-    public final static String BUSCAR_SENHAS_USER = "SELECT * FROM TB_SENHA WHERE ID_USER = :idUser";
+    public final static String FIND_USER_PASSWORDS = "SELECT * FROM TB_SENHA WHERE ID_USER = :idUser";
+    public final static String FIND_BY_ID = "SELECT * FROM TB_SENHA WHERE ID_SENHA = :idSenha";
+    public final static String UPDATE_PASSWORD = "UPDATE TB_SENHA SET TITULO SENHA DATA_ALTERACAO ";
 
-    @Query(value = BUSCAR_SENHAS_USER, nativeQuery = true)
-    public List<SenhaModel> findSenhasByIdUser(@Param("idUser") final Integer idUser);
+    @Query(value = FIND_USER_PASSWORDS, nativeQuery = true)
+    public List<SenhaModel> findSenhasByIdUser(@Param("idUser") final String idUser);
+
+    @Query(value = FIND_BY_ID, nativeQuery = true)
+    public SenhaModel findByGuidId(@Param("idSenha") final String idSenha);
+
+    // @Query(value = UPDATE_PASSWORD, nativeQuery = true)
+    // public boolean update
+
 }

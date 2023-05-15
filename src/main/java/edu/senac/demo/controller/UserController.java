@@ -1,5 +1,6 @@
 package edu.senac.demo.controller;
 
+import java.text.ParseException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -36,11 +37,11 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) {
-        return ResponseEntity.status(200).body(service.insert(user));
+    public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws ParseException {
+        return ResponseEntity.status(201).body(service.insert(user));
     }
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha) {
         boolean isValido = service.login(usario, senha);
 
@@ -49,5 +50,4 @@ public class UserController {
 
         return ResponseEntity.status(204).build();
     }
-
 }
