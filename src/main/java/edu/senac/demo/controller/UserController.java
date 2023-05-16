@@ -41,6 +41,16 @@ public class UserController {
         return ResponseEntity.status(201).body(service.insert(user));
     }
 
+    @GetMapping("usuario")
+    public ResponseEntity<UserModel> buscarUsuarioPorEmail(@RequestHeader String email) {
+        UserModel user = service.findByEmail(email);
+
+        if (user == null) {
+            return ResponseEntity.status(404).body(user);
+        }
+        return ResponseEntity.status(200).body(user);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha) {
         boolean isValido = service.login(usario, senha);

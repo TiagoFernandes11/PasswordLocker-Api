@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
 import edu.senac.demo.tools.DateAdministrator;
@@ -19,7 +20,6 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private DateAdministrator dateAdministrator;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -39,7 +39,7 @@ public class UserService {
         String upperEmail = obj.getEmail().toUpperCase();
         String upperNome = obj.getNome().toUpperCase();
         String enconder = this.passwordEncoder.encode(obj.getSenha());
-        Date date = dateAdministrator.currentDate();
+        Date date = DateAdministrator.currentDate();
 
         obj.setEmail(upperEmail);
         obj.setNome(upperNome);
@@ -51,7 +51,8 @@ public class UserService {
     }
 
     public UserModel findByEmail(String email) {
-        return userRepository.findByEmail(email.toUpperCase());
+        String emailUpper = email.toUpperCase();
+        return userRepository.findByEmail(emailUpper);
     }
 
     public boolean login(String email, String senha) {
@@ -62,13 +63,13 @@ public class UserService {
         return isValido;
     }
 
-    public UserModel update(String id, UserModel user) {
+    public UserModel update(String id, UpdateUserModel user) {
         UserModel entity = userRepository.findByGuidId(id);
         updateData(entity, user);
         return userRepository.save(entity);
     }
 
-    private void updateData(UserModel entity, UserModel obj) {
+    private void updateData(UserModel entity, UpdateUserModel obj) {
         entity.setNome(obj.getNome().toUpperCase());
         entity.setEmail(obj.getEmail().toUpperCase());
         entity.setTelefone(obj.getTelefone());
