@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,9 +29,10 @@ public class PasswordController {
         this.passwordService = passwordService;
     }
 
-    @GetMapping("/{idUser}")
-    public ResponseEntity<List<SenhaModel>> listarSenhasUsuario(@PathVariable String idUser) {
-        return ResponseEntity.status(200).body(passwordService.findUserPasswords(idUser));
+    @GetMapping("/senhasuser")
+    public ResponseEntity<List<SenhaModel>> listarSenhasUsuario(@RequestHeader String idUser) {
+        List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
+        return ResponseEntity.status(200).body(senhas);
     }
 
     @PostMapping

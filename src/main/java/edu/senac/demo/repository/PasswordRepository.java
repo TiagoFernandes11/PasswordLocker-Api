@@ -9,8 +9,8 @@ import edu.senac.demo.model.SenhaModel;
 
 public interface PasswordRepository extends JpaRepository<SenhaModel, String>, JpaSpecificationExecutor<SenhaModel> {
 
-    public final static String FIND_USER_PASSWORDS = "SELECT * FROM TB_SENHA WHERE ID_USER = :idUser";
-    public final static String FIND_BY_ID = "SELECT * FROM TB_SENHA WHERE ID_SENHA = :idSenha";
+    public final static String FIND_USER_PASSWORDS = "SELECT * FROM TB_SENHA WHERE ID_USER LIKE :idUser";
+    public final static String FIND_BY_ID = "SELECT * FROM TB_SENHA WHERE ID_SENHA LIKE :idSenha";
     public final static String UPDATE_PASSWORD = "UPDATE TB_SENHA SET TITULO SENHA DATA_ALTERACAO ";
 
     @Query(value = FIND_USER_PASSWORDS, nativeQuery = true)

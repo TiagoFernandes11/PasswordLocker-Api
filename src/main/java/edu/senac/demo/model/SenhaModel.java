@@ -38,6 +38,6 @@ public class SenhaModel implements Serializable {
     private Date dataAlteracao;
 
     @Column(name = "ID_USER")
-    private int fk_idUser;
+    private String fk_idUser;
 
 }

@@ -17,7 +17,6 @@ public class PasswordService {
 
     private PasswordRepository passwordRepository;
     private PasswordEncoder passwordEncoder;
-    private DateAdministrator dateAdministrator;
 
     public PasswordService(PasswordRepository passwordRepository) {
         this.passwordRepository = passwordRepository;
@@ -25,7 +24,8 @@ public class PasswordService {
     }
 
     public List<SenhaModel> findUserPasswords(String idUser) {
-        return passwordRepository.findSenhasByIdUser(idUser);
+        List<SenhaModel> senhas = passwordRepository.findSenhasByIdUser(idUser);
+        return senhas;
     }
 
     public SenhaModel insert(SenhaModel senha) throws ParseException {
@@ -33,9 +33,9 @@ public class PasswordService {
         senha.setTitulo(titulo);
 
         String encoder = this.passwordEncoder.encode(senha.getSenha());
-        senha.setSenha(encoder);
+        senha.setSenha(senha.getSenha());
 
-        Date currentDate = dateAdministrator.currentDate();
+        Date currentDate = DateAdministrator.currentDate();
         senha.setDataCriacao(currentDate);
 
         passwordRepository.save(senha);
@@ -52,19 +52,25 @@ public class PasswordService {
         return senhaDelete;
     }
 
-    public boolean updatePassword(String idSenha, UpdatePasswordModel data) throws ParseException {
+    public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data) throws ParseException {
         SenhaModel passwordAtt = findByGuidId(idSenha);
 
-        String upperTitulo = data.getTitulo().toUpperCase();
-        String encoder = passwordEncoder.encode(data.getSenha());
-        Date dateNow = dateAdministrator.currentDate();
+        Date dateNow = DateAdministrator.currentDate();
 
-        passwordAtt.setTitulo(upperTitulo);
-        passwordAtt.setSenha(encoder);
-        passwordAtt.setDataAlteracao(dateNow);
+        if (!(data.getTitulo().isBlank() || data.getTitulo().isEmpty())) {
+            String upperTitulo = data.getTitulo().toUpperCase();
+            passwordAtt.setTitulo(upperTitulo);
+            passwordAtt.setDataAlteracao(dateNow);
+        }
+
+        if (!(data.getSenha().isBlank() || data.getSenha().isEmpty())) {
+            // String encoder = passwordEncoder.encode(data.getSenha());
+            passwordAtt.setSenha(data.getSenha());
+            passwordAtt.setDataAlteracao(dateNow);
+        }
 
         passwordRepository.save(passwordAtt);
-        return true;
+        return passwordAtt;
     }
 
 }
