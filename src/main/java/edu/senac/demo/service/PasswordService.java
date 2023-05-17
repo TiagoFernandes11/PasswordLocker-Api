@@ -17,4 +17,10 @@ public class PasswordService {
     public List<SenhaModel> buscarSenharDeUsuario(int idUser) {
         return passwordRepository.findSenhasByIdUser(idUser);
     }
+
+    public void deletePassword(int id) {
+        passwordRepository.deleteById(id);
+    }
+
+   
 }

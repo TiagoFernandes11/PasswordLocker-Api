@@ -13,4 +13,6 @@ public interface PasswordRepository extends JpaRepository<SenhaModel, Integer>, 
 
     @Query(value = BUSCAR_SENHAS_USER, nativeQuery = true)
     public List<SenhaModel> findSenhasByIdUser(@Param("idUser") final Integer idUser);
+
+    void deleteById(int id);
 }
