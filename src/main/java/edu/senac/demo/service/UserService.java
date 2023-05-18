@@ -1,14 +1,18 @@
 package edu.senac.demo.service;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
+import edu.senac.demo.tools.DateAdministrator;
 
 @Service
 public class UserService {
@@ -17,45 +21,63 @@ public class UserService {
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
 
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = new BCryptPasswordEncoder();
+    }
+
     public List<UserModel> findAll() {
         return userRepository.findAll();
     }
 
-    public Optional<UserModel> findById(int id) {
-        Optional<UserModel> obj = userRepository.findById(id);
+    public UserModel findByGuidId(String idUser) {
+        UserModel obj = userRepository.findByGuidId(idUser);
         return obj;
     }
 
-    public UserModel insert(UserModel obj) {
+    public UserModel insert(UserModel obj) throws ParseException {
+        String upperEmail = obj.getEmail().toUpperCase();
+        String upperNome = obj.getNome().toUpperCase();
+        String enconder = this.passwordEncoder.encode(obj.getSenha());
+        Date date = DateAdministrator.currentDate();
+
+        obj.setEmail(upperEmail);
+        obj.setNome(upperNome);
+        obj.setTelefone(obj.getTelefone());
+        obj.setSenha(enconder);
+        obj.setDataCriacao(date);
+
         return userRepository.save(obj);
     }
 
-    public void delete(int id) {
-        userRepository.deleteById(id);
-    }
-
-    public UserModel update(int id, UserModel user) {
-        UserModel entity = userRepository.getReferenceById(id);
-        updateData(entity, user);
-        return userRepository.save(entity);
-    }
-
     public UserModel findByEmail(String email) {
-        return userRepository.findByEmail(email.toUpperCase());
+        String emailUpper = email.toUpperCase();
+        return userRepository.findByEmail(emailUpper);
     }
 
     public boolean login(String email, String senha) {
         UserModel user = userRepository.findByEmail(email.toUpperCase());
         String senhaUser = user.getSenha();
-        boolean isValido = passwordEncoder.matches(senha, senhaUser);
 
+        boolean isValido = passwordEncoder.matches(senha, senhaUser);
         return isValido;
     }
 
-    private void updateData(UserModel entity, UserModel obj) {
-        entity.setNome(obj.getNome());
-        entity.setEmail(obj.getEmail());
-        entity.setTelefone(obj.getTelefone());
+    public UserModel update(String id, UpdateUserModel user) {
+        UserModel entity = userRepository.findByGuidId(id);
+        updateData(entity, user);
+        return userRepository.save(entity);
     }
 
+    private void updateData(UserModel entity, UpdateUserModel obj) {
+        entity.setNome(obj.getNome().toUpperCase());
+        entity.setEmail(obj.getEmail().toUpperCase());
+        entity.setTelefone(obj.getTelefone());
+        entity.setSenha(obj.getSenha());
+    }
+
+    public boolean deleteByGuidId(String idUser) {
+        boolean deltedUser = userRepository.deleteByGuidId(idUser);
+        return deltedUser;
+    }
 }

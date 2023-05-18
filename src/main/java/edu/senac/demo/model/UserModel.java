@@ -1,16 +1,19 @@
 package edu.senac.demo.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+
+import org.hibernate.annotations.GenericGenerator;
+
 import lombok.Data;
 
 @Data
@@ -20,18 +23,15 @@ public class UserModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "ID_USER")
-    private Long id;
+    private String id;
 
     @NotEmpty(message = "O nome é obrigatório!")
     @Size(min = 2, message = "O nome deve, no mínimo, ter 3 caracteres")
     @Column(name = "NOME", length = 50, nullable = false)
     private String nome;
-
-    @NotEmpty(message = "O CPF é obrigatório!")
-    @Column(name = "CPF", length = 11, nullable = false)
-    private String cpf;
 
     @Email(message = "Insira um e-mail válido!")
     @NotEmpty(message = "O e-mail é obrigatório!")
@@ -46,5 +46,11 @@ public class UserModel implements Serializable {
     @NotEmpty(message = "O numero de telefone é obrigatória!")
     @Column(name = "TELEFONE", length = 14, nullable = false)
     private String telefone;
+
+    @Column(name = "DATA_CRIACAO", nullable = false)
+    private Date dataCriacao;
+
+    @Column(name = "DATA_ALTERACAO", nullable = true)
+    private Date dataAlteracao;
 
 }
