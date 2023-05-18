@@ -73,4 +73,8 @@ public class PasswordService {
         return passwordAtt;
     }
 
+    public void deletePassword(int id) {
+        passwordRepository.deleteById(id);
+    }
+
 }
