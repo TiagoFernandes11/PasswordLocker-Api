@@ -1,6 +1,7 @@
 package edu.senac.demo.controller;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.senac.demo.tools.EncryptionUtils;
@@ -31,15 +32,25 @@ public class PasswordController {
     }
 
     @GetMapping("/senhasuser")
-    public ResponseEntity<List<SenhaModel>> listarSenhasUsuario(@RequestHeader String idUser) {
+    public ResponseEntity<List<SenhaModel>> listarSenhasUsuario(@RequestHeader String idUser) throws Exception {
         List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
-        return ResponseEntity.status(200).body(senhas);
+        String token = "1J7gujuhuUgbuvcf";
+
+        List<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
+        for (SenhaModel senha : senhas) {
+            String senhaDescript = senha.getSenha();
+            senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
+            senha.setSenha(senhaDescript);
+            senhasDescript.add(senha);
+        }
+
+        return ResponseEntity.status(200).body(senhasDescript);
     }
 
     @PostMapping
     public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha) throws Exception {
-        String token =  "ASAD97976asd978as8ghbnoklmncmc938231¨$%¨&%#";
-        String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(),token);
+        String token = "1J7gujuhuUgbuvcf";
+        String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), token);
         senha.setSenha(senhaEncri);
         return ResponseEntity.status(201).body(passwordService.insert(senha));
     }
