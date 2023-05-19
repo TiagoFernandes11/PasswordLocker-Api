@@ -3,6 +3,7 @@ package edu.senac.demo.controller;
 import java.text.ParseException;
 import java.util.List;
 
+import edu.senac.demo.tools.EncryptionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,7 +37,10 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha) throws ParseException {
+    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha) throws Exception {
+        String token =  "ASAD97976asd978as8ghbnoklmncmc938231¨$%¨&%#";
+        String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(),token);
+        senha.setSenha(senhaEncri);
         return ResponseEntity.status(201).body(passwordService.insert(senha));
     }
 
