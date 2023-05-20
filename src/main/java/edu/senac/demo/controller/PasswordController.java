@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.senac.demo.tools.EncryptionUtils;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,10 +51,16 @@ public class PasswordController {
 
     @PostMapping
     public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha) throws Exception {
-        String token = "1J7gujuhuUgbuvcf";
-        String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), token);
-        senha.setSenha(senhaEncri);
-        return ResponseEntity.status(201).body(passwordService.insert(senha));
+        try {
+
+            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), Session.getToken());
+            senha.setSenha(senhaEncri);
+            return ResponseEntity.status(201).body(passwordService.insert(senha));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
     }
 
     @DeleteMapping

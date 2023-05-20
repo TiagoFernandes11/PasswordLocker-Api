@@ -32,7 +32,6 @@ public class PasswordService {
         String titulo = senha.getTitulo().toUpperCase();
         senha.setTitulo(titulo);
 
-        String encoder = this.passwordEncoder.encode(senha.getSenha());
         senha.setSenha(senha.getSenha());
 
         Date currentDate = DateAdministrator.currentDate();

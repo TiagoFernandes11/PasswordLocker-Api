@@ -1,5 +1,6 @@
 package edu.senac.demo.controller;
 
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.service.UserService;
+import edu.senac.demo.tools.EncryptionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -52,12 +54,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha) {
+    public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha)
+            throws NoSuchAlgorithmException {
         boolean isValido = service.login(usario, senha);
 
         if (!isValido)
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
+        Session.startSession();
         return ResponseEntity.status(204).build();
     }
 }
