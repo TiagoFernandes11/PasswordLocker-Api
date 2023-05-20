@@ -1,7 +1,6 @@
 package edu.senac.demo.tools;
 
 import org.bouncycastle.crypto.BufferedBlockCipher;
-import org.bouncycastle.crypto.CipherKeyGenerator;
 import org.bouncycastle.crypto.engines.AESEngine;
 import org.bouncycastle.crypto.modes.CBCBlockCipher;
 import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
@@ -25,6 +24,7 @@ public class EncryptionUtils {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(256); // Tamanho da chave em bits
         SecretKey secretKey = keyGenerator.generateKey();
+
         return secretKey.getEncoded();
     }
 
