@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.service.UserService;
-import edu.senac.demo.tools.EncryptionUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
