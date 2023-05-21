@@ -73,9 +73,8 @@ public class PasswordService {
         return passwordAtt;
     }
 
-    public void deletePassword(int id) {
-        passwordRepository.deleteById(id);
-        //ola
+    public boolean deletePassword(String idSenha) {
+        boolean deletePassword = PasswordRepository.deleteByGuidId(idSenha);
+        return deletePassword;
     }
-
 }

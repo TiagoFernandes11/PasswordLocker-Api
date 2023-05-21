@@ -12,6 +12,7 @@ public interface PasswordRepository extends JpaRepository<SenhaModel, String>, J
     public final static String FIND_USER_PASSWORDS = "SELECT * FROM TB_SENHA WHERE ID_USER LIKE :idUser";
     public final static String FIND_BY_ID = "SELECT * FROM TB_SENHA WHERE ID_SENHA LIKE :idSenha";
     public final static String UPDATE_PASSWORD = "UPDATE TB_SENHA SET TITULO SENHA DATA_ALTERACAO ";
+    public final static String DELETE_BY_ID = "DELETE FROM TB_SENHA WHERE ID_SENHA LIKE :idSenha";
 
     @Query(value = FIND_USER_PASSWORDS, nativeQuery = true)
     public List<SenhaModel> findSenhasByIdUser(@Param("idUser") final String idUser);
@@ -20,6 +21,13 @@ public interface PasswordRepository extends JpaRepository<SenhaModel, String>, J
     public SenhaModel findByGuidId(@Param("idSenha") final String idSenha);
 
     // @Query(value = UPDATE_PASSWORD, nativeQuery = true)
-    // public boolean update
+     //public boolean update
 
+   /* @Query(value = DELETE_BY_ID, nativeQuery = true)
+    public boolean deleteByGuidId(@Param("idSenha") final String idSenha);
+*/
+    @Query(value = DELETE_BY_ID, nativeQuery = true)
+    public static boolean deleteByGuidId(@Param("idSenha") final String idSenha) {
+        return false;
+    }
 }
