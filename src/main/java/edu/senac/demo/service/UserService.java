@@ -35,7 +35,12 @@ public class UserService {
         return obj;
     }
 
-    public UserModel insert(UserModel obj) throws ParseException {
+    public UserModel insert(UserModel obj) throws Exception {
+        UserModel userExiste = findByEmail(obj.getEmail());
+        if (userExiste != null) {
+            throw new Exception("Email já cadastrado na base de dados");
+        }
+
         String upperEmail = obj.getEmail().toUpperCase();
         String upperNome = obj.getNome().toUpperCase();
         String enconder = this.passwordEncoder.encode(obj.getSenha());

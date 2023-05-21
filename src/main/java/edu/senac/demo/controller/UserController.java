@@ -38,8 +38,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws ParseException {
-        return ResponseEntity.status(201).body(service.insert(user));
+    public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws Exception {
+        try {
+            return ResponseEntity.status(201).body(service.insert(user));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
     }
 
     @GetMapping("usuario")
