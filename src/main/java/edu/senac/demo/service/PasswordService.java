@@ -5,9 +5,7 @@ import java.util.Date;
 import java.util.List;
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import edu.senac.demo.repository.PasswordRepository;
 import edu.senac.demo.tools.DateAdministrator;
@@ -16,11 +14,10 @@ import edu.senac.demo.tools.DateAdministrator;
 public class PasswordService {
 
     private PasswordRepository passwordRepository;
-    private PasswordEncoder passwordEncoder;
 
     public PasswordService(PasswordRepository passwordRepository) {
         this.passwordRepository = passwordRepository;
-        this.passwordEncoder = new BCryptPasswordEncoder();
+        new BCryptPasswordEncoder();
     }
 
     public List<SenhaModel> findUserPasswords(String idUser) {

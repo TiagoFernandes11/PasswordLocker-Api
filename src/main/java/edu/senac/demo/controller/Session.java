@@ -2,7 +2,6 @@ package edu.senac.demo.controller;
 
 import java.security.NoSuchAlgorithmException;
 
-import edu.senac.demo.tools.EncryptionUtils;
 import edu.senac.demo.tools.TimerUtils;
 
 public class Session {
