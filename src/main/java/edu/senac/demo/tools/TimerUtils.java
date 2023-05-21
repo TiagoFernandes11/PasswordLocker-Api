@@ -18,7 +18,7 @@ public class TimerUtils {
 
         if (!isCounting) {
             timer.schedule(new TimerTask() {
-                int counter = 60; // 15 minutes in seconds
+                int counter = 60 * 5;
 
                 @Override
                 public void run() {

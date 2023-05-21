@@ -15,8 +15,9 @@ public class Session {
     }
 
     public static void setToken() throws NoSuchAlgorithmException {
-        String newToken = EncryptionUtils.generateBase64EncodedKey();
-        token = newToken;
+        // String newToken = EncryptionUtils.generateBase64EncodedKey();
+        // token = newToken;
+        token = "valorDoToken";
     }
 
     public static String getToken() throws Exception {

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.senac.demo.tools.EncryptionUtils;
+import edu.senac.demo.tools.TextTools;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,26 @@ public class PasswordController {
     }
 
     @GetMapping("/senhasuser")
-    public ResponseEntity<List<SenhaModel>> listarSenhasUsuario(@RequestHeader String idUser) throws Exception {
-        List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
-        String token = "1J7gujuhuUgbuvcf";
+    public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser) throws Exception {
+        try {
+            List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
+            String token = Session.getToken();
 
-        List<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
-        for (SenhaModel senha : senhas) {
-            String senhaDescript = senha.getSenha();
-            senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
-            senha.setSenha(senhaDescript);
-            senhasDescript.add(senha);
+            List<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
+            for (SenhaModel senha : senhas) {
+                String senhaDescript = senha.getSenha();
+                senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
+                String semespacoNulo = TextTools.CheckNullField(senhaDescript);
+                senha.setSenha(semespacoNulo);
+                senhasDescript.add(senha);
+            }
+
+            return ResponseEntity.status(200).body(senhasDescript);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
 
-        return ResponseEntity.status(200).body(senhasDescript);
     }
 
     @PostMapping

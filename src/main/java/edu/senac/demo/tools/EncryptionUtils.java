@@ -17,12 +17,12 @@ import java.util.Arrays;
 
 public class EncryptionUtils {
 
-    private static final int KEY_SIZE = 256; // Tamanho da chave em bits
+    private static final int KEY_SIZE = 128; // Tamanho da chave em bits
     private static final int IV_SIZE = 16; // Tamanho do vetor de inicialização em bytes
 
     private static byte[] generateKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
-        keyGenerator.init(256); // Tamanho da chave em bits
+        keyGenerator.init(128); // Tamanho da chave em bits
         SecretKey secretKey = keyGenerator.generateKey();
 
         return secretKey.getEncoded();
