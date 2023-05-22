@@ -1,12 +1,5 @@
 package edu.senac.demo.controller;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
-import edu.senac.demo.tools.EncryptionUtils;
-import edu.senac.demo.tools.TextTools;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
 import edu.senac.demo.service.PasswordService;
@@ -38,18 +30,7 @@ public class PasswordController {
     public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
-            List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
-            List<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
-            for (SenhaModel senha : senhas) {
-                String senhaDescript = senha.getSenha();
-                senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
-                String semespacoNulo = TextTools.CheckNullField(senhaDescript);
-                senha.setSenha(semespacoNulo);
-                senhasDescript.add(senha);
-            }
-
-            return ResponseEntity.status(200).body(senhasDescript);
-
+            return ResponseEntity.status(200).body(passwordService.findUserPasswords(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -60,11 +41,7 @@ public class PasswordController {
     public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha, @RequestHeader String token)
             throws Exception {
         try {
-
-            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), token);
-            senha.setSenha(senhaEncri);
-            return ResponseEntity.status(201).body(passwordService.insert(senha));
-
+            return ResponseEntity.status(201).body(passwordService.insert(senha, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -77,8 +54,13 @@ public class PasswordController {
     }
 
     @PutMapping
-    public ResponseEntity<?> AlterarSenha(@RequestHeader String idSenha, @RequestBody UpdatePasswordModel data)
-            throws ParseException {
-        return ResponseEntity.status(201).body(passwordService.updatePassword(idSenha, data));
+    public ResponseEntity<?> AlterarSenha(@RequestHeader String idSenha, @RequestBody UpdatePasswordModel data,
+            @RequestHeader String token)
+            throws Exception {
+        try {
+            return ResponseEntity.status(201).body(passwordService.updatePassword(idSenha, data, token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 }

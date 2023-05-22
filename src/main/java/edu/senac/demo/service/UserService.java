@@ -8,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import edu.senac.demo.controller.Session;
 import edu.senac.demo.model.LoginModel;
 import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
@@ -77,17 +78,31 @@ public class UserService {
         return infoLogin;
     }
 
-    public UserModel update(String id, UpdateUserModel user) {
-        UserModel entity = userRepository.findByGuidId(id);
-        updateData(entity, user);
-        return userRepository.save(entity);
+    public UserModel update(String id, UpdateUserModel user, String token) throws Exception {
+        try {
+            Session.verifyToken();
+            UserModel entity = userRepository.findByGuidId(id);
+            updateData(entity, user);
+            return userRepository.save(entity);
+
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+
     }
 
     private void updateData(UserModel entity, UpdateUserModel obj) {
-        entity.setNome(obj.getNome().toUpperCase());
-        entity.setEmail(obj.getEmail().toUpperCase());
-        entity.setTelefone(obj.getTelefone());
-        entity.setSenha(obj.getSenha());
+        if (!(obj.getNome().isEmpty() || obj.getNome().isBlank()))
+            entity.setNome(obj.getNome().toUpperCase());
+
+        if (!(obj.getEmail().isEmpty() || obj.getEmail().isBlank()))
+            entity.setEmail(obj.getEmail().toUpperCase());
+
+        if (!(obj.getTelefone().isEmpty() || obj.getTelefone().isBlank()))
+            entity.setTelefone(obj.getTelefone());
+
+        if (!(obj.getSenha().isEmpty() || obj.getSenha().isBlank()))
+            entity.setSenha(obj.getSenha());
     }
 
     public boolean deleteByGuidId(String idUser) {

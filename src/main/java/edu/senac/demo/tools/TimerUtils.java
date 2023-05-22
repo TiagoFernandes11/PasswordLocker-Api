@@ -18,7 +18,7 @@ public class TimerUtils {
 
         if (!isCounting) {
             timer.schedule(new TimerTask() {
-                int counter = 60 * 5;
+                int counter = 60 * 3;
 
                 @Override
                 public void run() {

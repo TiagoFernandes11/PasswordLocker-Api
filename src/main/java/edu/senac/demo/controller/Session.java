@@ -20,10 +20,15 @@ public class Session {
     }
 
     public static String getToken() throws Exception {
+        return token;
+    }
+
+    public static void verifyToken() throws Exception {
         if (!timer.isTimerCounting()) {
+            EncryptionUtils.clearKey(token);
+            token = null;
             throw new Exception("Token invalido");
         }
-        return token;
     }
 
 }

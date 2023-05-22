@@ -76,4 +76,9 @@ public class EncryptionUtils {
         byte[] decodedKey = Base64Utils.decodeFromString(base64Key);
         return new SecretKeySpec(decodedKey, "AES");
     }
+
+    public static void clearKey(String key) throws NoSuchAlgorithmException {
+        byte[] keyConvert = key.getBytes();
+        Arrays.fill(keyConvert, (byte) 0);
+    }
 }
