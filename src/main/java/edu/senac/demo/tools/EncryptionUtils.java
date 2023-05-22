@@ -17,10 +17,19 @@ import java.util.Arrays;
 
 public class EncryptionUtils {
 
-    private static final int KEY_SIZE = 256; // Tamanho da chave em bits
-    private static final int IV_SIZE = 16; // Tamanho do vetor de inicialização em bytes
+    private final int KEY_SIZE = 256; // Tamanho da chave em bits
+    private final int IV_SIZE = 16; // Tamanho do vetor de inicialização em bytes
+    private String token;
 
-    private static byte[] generateKey() throws NoSuchAlgorithmException {
+    public EncryptionUtils() throws NoSuchAlgorithmException {
+        setToken();
+    }
+
+    private void setToken() throws NoSuchAlgorithmException {
+        this.token = generateBase64EncodedKey();
+    }
+
+    private byte[] generateKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
         keyGenerator.init(128); // Tamanho da chave em bits
         SecretKey secretKey = keyGenerator.generateKey();
@@ -28,7 +37,7 @@ public class EncryptionUtils {
         return secretKey.getEncoded();
     }
 
-    private static byte[] encrypt(byte[] data, byte[] key, byte[] iv) throws Exception {
+    private byte[] encrypt(byte[] data, byte[] key, byte[] iv) throws Exception {
         BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
         cipher.init(true, new ParametersWithIV(new KeyParameter(key), iv));
         byte[] output = new byte[cipher.getOutputSize(data.length)];
@@ -37,7 +46,7 @@ public class EncryptionUtils {
         return output;
     }
 
-    private static byte[] decrypt(byte[] encryptedData, byte[] key, byte[] iv) throws Exception {
+    private byte[] decrypt(byte[] encryptedData, byte[] key, byte[] iv) throws Exception {
         BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESEngine()));
         cipher.init(false, new ParametersWithIV(new KeyParameter(key), iv));
         byte[] output = new byte[cipher.getOutputSize(encryptedData.length)];
@@ -46,7 +55,7 @@ public class EncryptionUtils {
         return output;
     }
 
-    public static String encryptData(String data, String keyString) throws Exception {
+    public String encryptData(String data, String keyString) throws Exception {
         byte[] key = Arrays.copyOfRange(Base64Utils.decodeFromString(keyString), 0, KEY_SIZE / 8);
         byte[] iv = new byte[IV_SIZE];
         SecureRandom random = new SecureRandom();
@@ -58,7 +67,7 @@ public class EncryptionUtils {
         return Base64Utils.encodeToString(output);
     }
 
-    public static String decryptData(String encryptedDataString, String keyString) throws Exception {
+    public String decryptData(String encryptedDataString, String keyString) throws Exception {
         byte[] key = Arrays.copyOfRange(Base64Utils.decodeFromString(keyString), 0, KEY_SIZE / 8);
         byte[] encryptedData = Base64Utils.decodeFromString(encryptedDataString);
         byte[] iv = Arrays.copyOfRange(encryptedData, 0, IV_SIZE);
@@ -67,17 +76,17 @@ public class EncryptionUtils {
         return new String(decryptedData);
     }
 
-    public static String generateBase64EncodedKey() throws NoSuchAlgorithmException {
+    public String generateBase64EncodedKey() throws NoSuchAlgorithmException {
         byte[] key = generateKey();
         return Base64Utils.encodeToString(key);
     }
 
-    public static SecretKey generateSecretKeyFromBase64String(String base64Key) {
+    public SecretKey generateSecretKeyFromBase64String(String base64Key) {
         byte[] decodedKey = Base64Utils.decodeFromString(base64Key);
         return new SecretKeySpec(decodedKey, "AES");
     }
 
-    public static void clearKey(String key) throws NoSuchAlgorithmException {
+    public void clearKey(String key) throws NoSuchAlgorithmException {
         byte[] keyConvert = key.getBytes();
         Arrays.fill(keyConvert, (byte) 0);
     }

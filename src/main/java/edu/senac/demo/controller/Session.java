@@ -5,18 +5,15 @@ import java.security.NoSuchAlgorithmException;
 import edu.senac.demo.tools.EncryptionUtils;
 import edu.senac.demo.tools.TimerUtils;
 
+// Criar token no login e ficar verificando ele em toda requisição
 public class Session {
     public static TimerUtils timer = new TimerUtils();
     private static String token;
+    public static EncryptionUtils criptgrafia;
 
     public static void startSession() throws NoSuchAlgorithmException {
-        setToken();
+        criptgrafia = new EncryptionUtils();
         timer.startTimer();
-    }
-
-    public static void setToken() throws NoSuchAlgorithmException {
-        String newToken = EncryptionUtils.generateBase64EncodedKey();
-        token = newToken;
     }
 
     public static String getToken() throws Exception {
@@ -25,7 +22,7 @@ public class Session {
 
     public static void verifyToken() throws Exception {
         if (!timer.isTimerCounting()) {
-            EncryptionUtils.clearKey(token);
+            criptgrafia = null;
             token = null;
             throw new Exception("Token invalido");
         }

@@ -33,7 +33,7 @@ public class PasswordService {
             ArrayList<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
             for (SenhaModel senha : senhas) {
                 String senhaDescript = senha.getSenha();
-                senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
+                senhaDescript = Session.criptgrafia.decryptData(senhaDescript, token);
                 String semespacoNulo = TextTools.CheckNullField(senhaDescript);
                 senha.setSenha(semespacoNulo);
                 senhasDescript.add(senha);
@@ -53,7 +53,7 @@ public class PasswordService {
             String titulo = senha.getTitulo().toUpperCase();
             senha.setTitulo(titulo);
 
-            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), token);
+            String senhaEncri = Session.criptgrafia.encryptData(senha.getSenha(), token);
             senha.setSenha(senhaEncri);
 
             Date currentDate = DateAdministrator.currentDate();
@@ -91,7 +91,7 @@ public class PasswordService {
             }
 
             if (!(data.getSenha().isBlank() || data.getSenha().isEmpty())) {
-                String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), token);
+                String senhaEncri = Session.criptgrafia.encryptData(data.getSenha(), token);
                 passwordAtt.setSenha(senhaEncri);
                 passwordAtt.setDataAlteracao(dateNow);
             }
