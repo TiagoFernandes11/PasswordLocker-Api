@@ -104,8 +104,14 @@ public class PasswordService {
 
     }
 
-    public void deletePassword(int id) {
-        // passwordRepository.deleteById(id);
+    public SenhaModel deletePassword(String id) throws Exception {
+        SenhaModel senhaDeletado = passwordRepository.findByGuidId(id);
+        boolean deletado = passwordRepository.deleteByGuidId(id);
+
+        if (!deletado)
+            throw new Exception("Algo deu errado ao deletar senha");
+
+        return senhaDeletado;
     }
 
 }
