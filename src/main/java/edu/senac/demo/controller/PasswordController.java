@@ -3,6 +3,7 @@ package edu.senac.demo.controller;
 import java.text.ParseException;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,8 +42,12 @@ public class PasswordController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deletarSenha(@RequestHeader String idUser) {
-        return ResponseEntity.status(200).body(passwordService.deleteById(idUser));
+    public ResponseEntity<?> deletarSenha(@RequestHeader String idSenha) {
+        try {
+            return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
     }
 
     @PutMapping

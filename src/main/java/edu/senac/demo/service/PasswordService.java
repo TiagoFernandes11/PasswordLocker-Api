@@ -46,12 +46,6 @@ public class PasswordService {
         return passwordRepository.findByGuidId(idPass);
     }
 
-    public SenhaModel deleteById(String idPass) {
-        SenhaModel senhaDelete = findByGuidId(idPass);
-        passwordRepository.deleteById(idPass);
-        return senhaDelete;
-    }
-
     public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data) throws ParseException {
         SenhaModel passwordAtt = findByGuidId(idSenha);
 
@@ -73,8 +67,14 @@ public class PasswordService {
         return passwordAtt;
     }
 
-    public void deletePassword(int id) {
-        passwordRepository.deleteById(id);
+    public SenhaModel deletePassword(String id) throws Exception {
+        SenhaModel senhaDeletado = passwordRepository.findByGuidId(id);
+        boolean deletado = passwordRepository.deleteByGuidId(id);
+
+        if (!deletado)
+            throw new Exception("Algo deu errado ao deletar senha");
+
+        return senhaDeletado;
     }
 
 }
