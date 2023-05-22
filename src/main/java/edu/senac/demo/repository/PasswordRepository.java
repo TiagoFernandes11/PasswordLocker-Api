@@ -18,8 +18,4 @@ public interface PasswordRepository extends JpaRepository<SenhaModel, String>, J
 
     @Query(value = FIND_BY_ID, nativeQuery = true)
     public SenhaModel findByGuidId(@Param("idSenha") final String idSenha);
-
-    // @Query(value = UPDATE_PASSWORD, nativeQuery = true)
-    // public boolean update
-
 }
