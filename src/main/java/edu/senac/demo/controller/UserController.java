@@ -1,7 +1,5 @@
 package edu.senac.demo.controller;
 
-import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.senac.demo.model.LoginModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.service.UserService;
 import io.swagger.annotations.Api;
@@ -47,7 +46,7 @@ public class UserController {
 
     }
 
-    @GetMapping("usuario")
+    @GetMapping("/usuario")
     public ResponseEntity<UserModel> buscarUsuarioPorEmail(@RequestHeader String email) {
         UserModel user = service.findByEmail(email);
 
@@ -59,13 +58,21 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha)
-            throws NoSuchAlgorithmException {
-        boolean isValido = service.login(usario, senha);
+            throws Exception {
+        try {
+            LoginModel responseLogin = service.login(usario, senha);
 
-        if (!isValido)
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            if (!responseLogin.isValido())
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-        Session.startSession();
-        return ResponseEntity.status(204).build();
+            Session.startSession();
+
+            responseLogin.setToken(Session.getToken());
+            return ResponseEntity.status(200).body(responseLogin);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+
+        }
+
     }
 }

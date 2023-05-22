@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 public class EncryptionUtils {
 
-    private static final int KEY_SIZE = 128; // Tamanho da chave em bits
+    private static final int KEY_SIZE = 256; // Tamanho da chave em bits
     private static final int IV_SIZE = 16; // Tamanho do vetor de inicialização em bytes
 
     private static byte[] generateKey() throws NoSuchAlgorithmException {

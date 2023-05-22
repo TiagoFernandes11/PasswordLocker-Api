@@ -35,11 +35,10 @@ public class PasswordController {
     }
 
     @GetMapping("/senhasuser")
-    public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser) throws Exception {
+    public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser, @RequestHeader String token)
+            throws Exception {
         try {
             List<SenhaModel> senhas = passwordService.findUserPasswords(idUser);
-            String token = Session.getToken();
-
             List<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
             for (SenhaModel senha : senhas) {
                 String senhaDescript = senha.getSenha();
@@ -58,10 +57,11 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha) throws Exception {
+    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha, @RequestHeader String token)
+            throws Exception {
         try {
 
-            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), Session.getToken());
+            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), token);
             senha.setSenha(senhaEncri);
             return ResponseEntity.status(201).body(passwordService.insert(senha));
 

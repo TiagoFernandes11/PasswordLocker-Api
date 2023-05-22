@@ -1,6 +1,5 @@
 package edu.senac.demo.service;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import edu.senac.demo.model.LoginModel;
 import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
@@ -60,12 +60,21 @@ public class UserService {
         return userRepository.findByEmail(emailUpper);
     }
 
-    public boolean login(String email, String senha) {
+    public LoginModel login(String email, String senha) throws Exception {
         UserModel user = userRepository.findByEmail(email.toUpperCase());
+        if (user == null)
+            throw new Exception("Usuario inexistente");
+
         String senhaUser = user.getSenha();
 
         boolean isValido = passwordEncoder.matches(senha, senhaUser);
-        return isValido;
+
+        LoginModel infoLogin = new LoginModel();
+
+        infoLogin.setIdUser(user.getId());
+        infoLogin.setValido(isValido);
+
+        return infoLogin;
     }
 
     public UserModel update(String id, UpdateUserModel user) {

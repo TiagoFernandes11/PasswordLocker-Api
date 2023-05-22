@@ -2,6 +2,7 @@ package edu.senac.demo.controller;
 
 import java.security.NoSuchAlgorithmException;
 
+import edu.senac.demo.tools.EncryptionUtils;
 import edu.senac.demo.tools.TimerUtils;
 
 public class Session {
@@ -14,9 +15,8 @@ public class Session {
     }
 
     public static void setToken() throws NoSuchAlgorithmException {
-        // String newToken = EncryptionUtils.generateBase64EncodedKey();
-        // token = newToken;
-        token = "valorDoToken";
+        String newToken = EncryptionUtils.generateBase64EncodedKey();
+        token = newToken;
     }
 
     public static String getToken() throws Exception {
