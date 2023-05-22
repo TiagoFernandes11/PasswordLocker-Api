@@ -104,7 +104,7 @@ public class PasswordService {
 
     }
 
-    public SenhaModel deletePassword(String id) throws Exception {
+    public SenhaModel deletePassword(String id, String token) throws Exception {
         SenhaModel senhaDeletado = passwordRepository.findByGuidId(id);
         boolean deletado = passwordRepository.deleteByGuidId(id);
 

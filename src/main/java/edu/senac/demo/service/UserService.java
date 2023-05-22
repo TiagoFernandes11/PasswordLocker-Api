@@ -105,7 +105,7 @@ public class UserService {
             entity.setSenha(obj.getSenha());
     }
 
-    public UserModel deleteByGuidId(String idUser) throws Exception {
+    public UserModel deleteByGuidId(String idUser, String token) throws Exception {
         UserModel userDeletado = userRepository.findByGuidId(idUser);
         boolean deltedUser = userRepository.deleteByGuidId(idUser);
         if (!deltedUser)

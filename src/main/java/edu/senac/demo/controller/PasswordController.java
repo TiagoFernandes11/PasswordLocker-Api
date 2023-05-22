@@ -49,9 +49,9 @@ public class PasswordController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deletarSenha(@RequestHeader String idSenha) {
+    public ResponseEntity<?> deletarSenha(@RequestHeader String idSenha, @RequestHeader String token) {
         try {
-            return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha));
+            return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

@@ -92,9 +92,9 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deletarUser(@RequestHeader String idUser) {
+    public ResponseEntity<?> deletarUser(@RequestHeader String idUser, @RequestHeader String token) {
         try {
-            return ResponseEntity.status(200).body(service.deleteByGuidId(idUser));
+            return ResponseEntity.status(200).body(service.deleteByGuidId(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
