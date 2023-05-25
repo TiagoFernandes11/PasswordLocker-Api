@@ -49,6 +49,17 @@ public class PasswordController {
 
     }
 
+    @GetMapping("/senha")
+    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String idSenha, @RequestHeader String token)
+            throws Exception {
+        try {
+            return ResponseEntity.status(200).body(passwordService.findByGuidId(idSenha, token));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+
+    }
+
     @DeleteMapping
     public ResponseEntity<?> deletarSenha(@RequestHeader String idSenha, @RequestHeader String token) {
         try {

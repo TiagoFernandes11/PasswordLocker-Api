@@ -73,12 +73,12 @@ public class PasswordService {
 
     }
 
-    public SenhaModel findByGuidId(String idPass) {
+    public SenhaModel findByGuidId(String idPass, String token) {
         return passwordRepository.findByGuidId(idPass);
     }
 
-    public SenhaModel deleteById(String idPass) {
-        SenhaModel senhaDelete = findByGuidId(idPass);
+    public SenhaModel deleteById(String idPass, String token) {
+        SenhaModel senhaDelete = findByGuidId(idPass, token);
         passwordRepository.deleteById(idPass);
         return senhaDelete;
     }
@@ -86,7 +86,7 @@ public class PasswordService {
     public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
         try {
             Session.verifyToken(token);
-            SenhaModel passwordAtt = findByGuidId(idSenha);
+            SenhaModel passwordAtt = findByGuidId(idSenha, token);
 
             Date dateNow = DateAdministrator.currentDate();
 
