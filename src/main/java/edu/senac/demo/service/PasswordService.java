@@ -7,10 +7,12 @@ import java.util.List;
 import edu.senac.demo.controller.Session;
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
+import edu.senac.demo.model.UserModel;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import edu.senac.demo.repository.PasswordRepository;
+import edu.senac.demo.repository.UserRepository;
 import edu.senac.demo.tools.DateAdministrator;
 import edu.senac.demo.tools.EncryptionUtils;
 import edu.senac.demo.tools.TextTools;
@@ -19,21 +21,23 @@ import edu.senac.demo.tools.TextTools;
 public class PasswordService {
 
     private PasswordRepository passwordRepository;
+    private UserRepository userRepository;
 
-    public PasswordService(PasswordRepository passwordRepository) {
+    public PasswordService(PasswordRepository passwordRepository, UserRepository userRepository) {
         this.passwordRepository = passwordRepository;
+        this.userRepository = userRepository;
         new BCryptPasswordEncoder();
     }
 
     public ArrayList<SenhaModel> findUserPasswords(String idUser, String token) throws Exception {
         try {
-            Session.verifyToken();
+            Session.verifyToken(token);
             List<SenhaModel> senhas = passwordRepository.findSenhasByIdUser(idUser);
 
             ArrayList<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
             for (SenhaModel senha : senhas) {
                 String senhaDescript = senha.getSenha();
-                senhaDescript = Session.criptgrafia.decryptData(senhaDescript, token);
+                senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
                 String semespacoNulo = TextTools.CheckNullField(senhaDescript);
                 senha.setSenha(semespacoNulo);
                 senhasDescript.add(senha);
@@ -47,13 +51,15 @@ public class PasswordService {
 
     }
 
-    public SenhaModel insert(SenhaModel senha, String token) throws Exception {
+    public SenhaModel insert(SenhaModel senha, String token, String idUser) throws Exception {
         try {
-            Session.verifyToken();
+            Session.verifyToken(token);
+
+            UserModel user = userRepository.findByGuidId(idUser);
             String titulo = senha.getTitulo().toUpperCase();
             senha.setTitulo(titulo);
 
-            String senhaEncri = Session.criptgrafia.encryptData(senha.getSenha(), token);
+            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey());
             senha.setSenha(senhaEncri);
 
             Date currentDate = DateAdministrator.currentDate();
@@ -79,7 +85,7 @@ public class PasswordService {
 
     public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
         try {
-            Session.verifyToken();
+            Session.verifyToken(token);
             SenhaModel passwordAtt = findByGuidId(idSenha);
 
             Date dateNow = DateAdministrator.currentDate();
@@ -91,7 +97,7 @@ public class PasswordService {
             }
 
             if (!(data.getSenha().isBlank() || data.getSenha().isEmpty())) {
-                String senhaEncri = Session.criptgrafia.encryptData(data.getSenha(), token);
+                String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), token);
                 passwordAtt.setSenha(senhaEncri);
                 passwordAtt.setDataAlteracao(dateNow);
             }
