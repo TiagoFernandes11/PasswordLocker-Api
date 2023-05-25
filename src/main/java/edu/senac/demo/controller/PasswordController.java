@@ -17,6 +17,7 @@ import edu.senac.demo.Exceptions.TokenException;
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
 import edu.senac.demo.service.PasswordService;
+import edu.senac.demo.service.UserService;
 
 @RestController
 @CrossOrigin("*")
@@ -25,14 +26,13 @@ public class PasswordController {
 
     @Autowired
     private PasswordService passwordService;
-    private VerifySession verifySession;
+    private UserService userService;
 
     @GetMapping("/senhasuser")
     public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
-
-            verifySession.verifyToken(token, idUser);
+            VerifySession.verifyToken(token, idUser);
             return ResponseEntity.status(200).body(passwordService.findUserPasswords(idUser, token));
 
         } catch (TokenException e) {
@@ -44,13 +44,12 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarSenha(@RequestHeader String IdUser, @RequestBody SenhaModel senha,
-            @RequestHeader String token,
-            @RequestHeader String idUser)
+    public ResponseEntity<?> cadastrarSenha(@RequestHeader String idUser, @RequestBody SenhaModel senha,
+            @RequestHeader String token)
             throws Exception {
         try {
-
-            verifySession.verifyToken(token, IdUser);
+            String chaveUser = userService.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
             return ResponseEntity.status(201).body(passwordService.insert(senha, token, idUser));
 
         } catch (TokenException e) {
@@ -62,11 +61,12 @@ public class PasswordController {
     }
 
     @GetMapping("/senha")
-    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String IdUser, @RequestHeader String idSenha,
+    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String idUser, @RequestHeader String idSenha,
             @RequestHeader String token) {
         try {
+            String chaveUser = userService.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
 
-            verifySession.verifyToken(token, IdUser);
             return ResponseEntity.status(200).body(passwordService.findByGuidId(idSenha, token));
 
         } catch (TokenException e) {
@@ -78,11 +78,12 @@ public class PasswordController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deletarSenha(@RequestHeader String IdUser, @RequestHeader String idSenha,
+    public ResponseEntity<?> deletarSenha(@RequestHeader String idUser, @RequestHeader String idSenha,
             @RequestHeader String token) {
         try {
+            String chaveUser = userService.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
 
-            verifySession.verifyToken(token, IdUser);
             return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha, token));
 
         } catch (TokenException e) {
@@ -93,13 +94,13 @@ public class PasswordController {
     }
 
     @PutMapping
-    public ResponseEntity<?> AlterarSenha(@RequestHeader String IdUser, @RequestHeader String idSenha,
+    public ResponseEntity<?> AlterarSenha(@RequestHeader String idUser, @RequestHeader String idSenha,
             @RequestBody UpdatePasswordModel data,
             @RequestHeader String token)
             throws Exception {
         try {
-
-            verifySession.verifyToken(token, IdUser);
+            String chaveUser = userService.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
             return ResponseEntity.status(201).body(passwordService.updatePassword(idSenha, data, token));
 
         } catch (TokenException e) {
@@ -112,7 +113,9 @@ public class PasswordController {
     @GetMapping("/qntSenhas")
     public ResponseEntity<?> buscarQntSenhas(@RequestHeader String idUser, @RequestHeader String token) {
         try {
-            verifySession.verifyToken(token, idUser);
+            String chaveUser = userService.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
+
             int qntSenhas = 0;
             return ResponseEntity.status(200).body(qntSenhas);
         } catch (TokenException e) {

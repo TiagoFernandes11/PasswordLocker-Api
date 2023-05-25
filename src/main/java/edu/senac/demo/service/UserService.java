@@ -61,18 +61,17 @@ public class UserService {
     public UserModel findByEmail(String email) throws Exception {
         String emailUpper = email.toUpperCase();
         UserModel user = userRepository.findByEmail(emailUpper);
-        if (user == null)
-            throw new NullPointerException("Usuario inexistente");
-
         return user;
     }
 
     public LoginModel login(String email, String senha) throws Exception {
         UserModel user = userRepository.findByEmail(email.toUpperCase());
+        if (user == null)
+            throw new NullPointerException("Usuario inexistente");
 
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String dataString = DateStringConverter.convert(dataHoraAtual);
-        String token = EncryptionUtils.encryptData(user.getKey(), dataString);
+        String token = EncryptionUtils.encryptData(dataString, user.getKey());
 
         String senhaUser = user.getSenha();
         boolean isValido = passwordEncoder.matches(senha, senhaUser);
@@ -89,6 +88,8 @@ public class UserService {
     public UserModel update(String id, UpdateUserModel user, String token) throws Exception {
         try {
             UserModel entity = userRepository.findByGuidId(id);
+            if (entity == null)
+                throw new NullPointerException("Usuario inexistente");
 
             updateData(entity, user);
             return userRepository.save(entity);
@@ -115,6 +116,9 @@ public class UserService {
 
     public UserModel deleteByGuidId(String idUser, String token) throws Exception {
         UserModel userDeletado = userRepository.findByGuidId(idUser);
+        if (userDeletado == null)
+            throw new NullPointerException("Usuario inexistente");
+
         boolean deltedUser = userRepository.deleteByGuidId(idUser);
         if (!deltedUser)
             throw new Exception("Algo deu errado a deletar usuario");

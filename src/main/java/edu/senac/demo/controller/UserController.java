@@ -33,7 +33,6 @@ public class UserController {
 
     @Autowired
     private UserService service;
-    private VerifySession verifySession;
 
     @ApiOperation(value = "Lista de usuarios")
     @GetMapping
@@ -56,7 +55,7 @@ public class UserController {
         try {
 
             UserModel user = service.findByEmail(email);
-            verifySession.verifyToken(token, user.getId());
+            VerifySession.verifyToken(token, user.getKey());
             return ResponseEntity.status(HttpStatus.OK).body(user);
 
         } catch (TokenException e) {
@@ -74,7 +73,8 @@ public class UserController {
             @RequestHeader String token)
             throws Exception {
         try {
-
+            String chaveUser = service.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
             return ResponseEntity.status(201).body(service.update(idUser, data, token));
 
         } catch (TokenException e) {
@@ -104,8 +104,10 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<?> deletarUser(@RequestHeader String idUser, @RequestHeader String token) throws Exception {
         try {
-            String key = service.findByGuidId(idUser).getKey();
-            verifySession.verifyToken(token, key);
+
+            String chaveUser = service.findByGuidId(idUser).getKey();
+            VerifySession.verifyToken(token, chaveUser);
+
             return ResponseEntity.status(HttpStatus.OK).body(service.deleteByGuidId(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
