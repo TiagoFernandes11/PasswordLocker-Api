@@ -38,10 +38,11 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha, @RequestHeader String token)
+    public ResponseEntity<?> cadastrarSenha(@RequestBody SenhaModel senha, @RequestHeader String token,
+            @RequestHeader String idUser)
             throws Exception {
         try {
-            return ResponseEntity.status(201).body(passwordService.insert(senha, token));
+            return ResponseEntity.status(201).body(passwordService.insert(senha, token, idUser));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

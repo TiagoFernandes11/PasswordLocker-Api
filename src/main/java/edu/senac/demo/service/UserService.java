@@ -14,6 +14,7 @@ import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
 import edu.senac.demo.tools.DateAdministrator;
+import edu.senac.demo.tools.EncryptionUtils;
 
 @Service
 public class UserService {
@@ -46,12 +47,14 @@ public class UserService {
         String upperNome = obj.getNome().toUpperCase();
         String enconder = this.passwordEncoder.encode(obj.getSenha());
         Date date = DateAdministrator.currentDate();
+        String key = EncryptionUtils.generateBase64EncodedKey();
 
         obj.setEmail(upperEmail);
         obj.setNome(upperNome);
         obj.setTelefone(obj.getTelefone());
         obj.setSenha(enconder);
         obj.setDataCriacao(date);
+        obj.setKey(key);
 
         return userRepository.save(obj);
     }
@@ -68,11 +71,11 @@ public class UserService {
 
         String senhaUser = user.getSenha();
 
+        String token = EncryptionUtils.encryptData(user.getKey(), user.getId());
         boolean isValido = passwordEncoder.matches(senha, senhaUser);
 
         LoginModel infoLogin = new LoginModel();
-
-        infoLogin.setIdUser(user.getId());
+        infoLogin.setToken(token);
         infoLogin.setValido(isValido);
 
         return infoLogin;
@@ -80,7 +83,7 @@ public class UserService {
 
     public UserModel update(String id, UpdateUserModel user, String token) throws Exception {
         try {
-            Session.verifyToken();
+            Session.verifyToken(token);
             UserModel entity = userRepository.findByGuidId(id);
             updateData(entity, user);
             return userRepository.save(entity);

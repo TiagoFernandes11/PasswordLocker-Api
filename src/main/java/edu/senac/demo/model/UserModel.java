@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
+import edu.senac.demo.tools.TimerUtils;
 import lombok.Data;
 
 @Data
@@ -21,6 +22,7 @@ import lombok.Data;
 @Table(name = "TB_USER")
 public class UserModel implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static TimerUtils timer = new TimerUtils();
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -52,5 +54,15 @@ public class UserModel implements Serializable {
 
     @Column(name = "DATA_ALTERACAO", nullable = true)
     private Date dataAlteracao;
+
+    @Column(name = "USER_KEY", nullable = false)
+    private String key;
+
+    public static void verifyToken(String token) throws Exception {
+        if (!timer.isTimerCounting()) {
+            throw new Exception("Token Expirado");
+        }
+
+    }
 
 }
