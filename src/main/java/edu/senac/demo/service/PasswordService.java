@@ -59,6 +59,9 @@ public class PasswordService {
             String titulo = senha.getTitulo().toUpperCase();
             senha.setTitulo(titulo);
 
+            String upperUserSite = senha.getUserSite().toUpperCase();
+            senha.setUserSite(upperUserSite);
+
             String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey());
             senha.setSenha(senhaEncri);
 
@@ -93,6 +96,12 @@ public class PasswordService {
             if (!(data.getTitulo().isBlank() || data.getTitulo().isEmpty())) {
                 String upperTitulo = data.getTitulo().toUpperCase();
                 passwordAtt.setTitulo(upperTitulo);
+                passwordAtt.setDataAlteracao(dateNow);
+            }
+
+            if (!(data.getUserSite().isBlank() || data.getUserSite().isEmpty())) {
+                String upperUserSite = data.getUserSite().toUpperCase();
+                passwordAtt.setUserSite(upperUserSite);
                 passwordAtt.setDataAlteracao(dateNow);
             }
 

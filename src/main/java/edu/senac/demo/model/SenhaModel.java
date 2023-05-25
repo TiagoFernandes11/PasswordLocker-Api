@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import org.hibernate.annotations.GenericGenerator;
-
 import lombok.Data;
 
 @Data
@@ -30,6 +29,9 @@ public class SenhaModel implements Serializable {
 
     @Column(name = "SENHA", length = 50, nullable = false)
     private String senha;
+
+    @Column(name = "USER_SITE", length = 50, nullable = false)
+    private String userSite;
 
     @Column(name = "DATA_CRIACAO", nullable = false)
     private Date dataCriacao;

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class UpdatePasswordModel {
     private String titulo;
     private String senha;
+    private String userSite;
 }
