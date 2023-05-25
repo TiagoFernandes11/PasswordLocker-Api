@@ -46,19 +46,27 @@ public class UserController {
         try {
             return ResponseEntity.status(201).body(service.insert(user));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
     }
 
     @GetMapping("/usuario")
-    public ResponseEntity<UserModel> buscarUsuarioPorEmail(@RequestHeader String email) {
-        UserModel user = service.findByEmail(email);
+    public ResponseEntity<?> buscarUsuarioPorEmail(@RequestHeader String email, @RequestHeader String token) {
+        try {
 
-        if (user == null) {
-            return ResponseEntity.status(404).body(user);
+            UserModel user = service.findByEmail(email);
+            verifySession.verifyToken(token, user.getId());
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (NullPointerException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return ResponseEntity.status(200).body(user);
+
     }
 
     @PutMapping
@@ -72,24 +80,23 @@ public class UserController {
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha)
+    public ResponseEntity<?> validarLogin(@RequestHeader String usuario, @RequestHeader String senha)
             throws Exception {
         try {
-            LoginModel responseLogin = service.login(usario, senha);
+            LoginModel responseLogin = service.login(usuario, senha);
 
             if (!responseLogin.isValido())
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-            return ResponseEntity.status(200).body(responseLogin);
+            return ResponseEntity.status(HttpStatus.OK).body(responseLogin);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
-
         }
 
     }
@@ -99,7 +106,7 @@ public class UserController {
         try {
             String key = service.findByGuidId(idUser).getKey();
             verifySession.verifyToken(token, key);
-            return ResponseEntity.status(200).body(service.deleteByGuidId(idUser, token));
+            return ResponseEntity.status(HttpStatus.OK).body(service.deleteByGuidId(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
