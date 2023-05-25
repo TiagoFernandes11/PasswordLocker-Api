@@ -1,6 +1,6 @@
 package edu.senac.demo.service;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +8,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import edu.senac.demo.controller.Session;
 import edu.senac.demo.model.LoginModel;
 import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
-import edu.senac.demo.tools.DateAdministrator;
+import edu.senac.demo.tools.DateStringConverter;
 import edu.senac.demo.tools.EncryptionUtils;
 
 @Service
@@ -46,14 +45,14 @@ public class UserService {
         String upperEmail = obj.getEmail().toUpperCase();
         String upperNome = obj.getNome().toUpperCase();
         String enconder = this.passwordEncoder.encode(obj.getSenha());
-        Date date = DateAdministrator.currentDate();
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
         String key = EncryptionUtils.generateBase64EncodedKey();
 
         obj.setEmail(upperEmail);
         obj.setNome(upperNome);
         obj.setTelefone(obj.getTelefone());
         obj.setSenha(enconder);
-        obj.setDataCriacao(date);
+        obj.setDataCriacao(dataHoraAtual);
         obj.setKey(key);
 
         return userRepository.save(obj);
@@ -67,14 +66,18 @@ public class UserService {
     public LoginModel login(String email, String senha) throws Exception {
         UserModel user = userRepository.findByEmail(email.toUpperCase());
         if (user == null)
-            throw new Exception("Usuario inexistente");
+            throw new NullPointerException("Usuario inexistente");
+
+        LocalDateTime dataHoraAtual = LocalDateTime.now();
+        String dataString = DateStringConverter.convert(dataHoraAtual);
+        String token = EncryptionUtils.encryptData(user.getKey(), dataString);
 
         String senhaUser = user.getSenha();
-
-        String token = EncryptionUtils.encryptData(user.getKey(), user.getId());
         boolean isValido = passwordEncoder.matches(senha, senhaUser);
 
         LoginModel infoLogin = new LoginModel();
+
+        infoLogin.setIdUser(user.getId());
         infoLogin.setToken(token);
         infoLogin.setValido(isValido);
 
@@ -83,8 +86,8 @@ public class UserService {
 
     public UserModel update(String id, UpdateUserModel user, String token) throws Exception {
         try {
-            Session.verifyToken(token);
             UserModel entity = userRepository.findByGuidId(id);
+
             updateData(entity, user);
             return userRepository.save(entity);
 

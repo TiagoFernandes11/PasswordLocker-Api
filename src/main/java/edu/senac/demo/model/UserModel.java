@@ -1,7 +1,7 @@
 package edu.senac.demo.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import edu.senac.demo.tools.TimerUtils;
 import lombok.Data;
 
 @Data
@@ -22,7 +21,6 @@ import lombok.Data;
 @Table(name = "TB_USER")
 public class UserModel implements Serializable {
     private static final long serialVersionUID = 1L;
-    private static TimerUtils timer = new TimerUtils();
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -50,19 +48,12 @@ public class UserModel implements Serializable {
     private String telefone;
 
     @Column(name = "DATA_CRIACAO", nullable = false)
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(name = "DATA_ALTERACAO", nullable = true)
-    private Date dataAlteracao;
+    private LocalDateTime dataAlteracao;
 
     @Column(name = "USER_KEY", nullable = false)
     private String key;
-
-    public static void verifyToken(String token) throws Exception {
-        if (!timer.isTimerCounting()) {
-            throw new Exception("Token Expirado");
-        }
-
-    }
 
 }

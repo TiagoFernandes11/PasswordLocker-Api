@@ -1,10 +1,9 @@
 package edu.senac.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import edu.senac.demo.controller.Session;
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
 import edu.senac.demo.model.UserModel;
@@ -13,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import edu.senac.demo.repository.PasswordRepository;
 import edu.senac.demo.repository.UserRepository;
-import edu.senac.demo.tools.DateAdministrator;
 import edu.senac.demo.tools.EncryptionUtils;
 import edu.senac.demo.tools.TextTools;
 
@@ -31,7 +29,6 @@ public class PasswordService {
 
     public ArrayList<SenhaModel> findUserPasswords(String idUser, String token) throws Exception {
         try {
-            Session.verifyToken(token);
             List<SenhaModel> senhas = passwordRepository.findSenhasByIdUser(idUser);
 
             ArrayList<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
@@ -53,7 +50,6 @@ public class PasswordService {
 
     public SenhaModel insert(SenhaModel senha, String token, String idUser) throws Exception {
         try {
-            Session.verifyToken(token);
 
             UserModel user = userRepository.findByGuidId(idUser);
             String titulo = senha.getTitulo().toUpperCase();
@@ -65,8 +61,8 @@ public class PasswordService {
             String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey());
             senha.setSenha(senhaEncri);
 
-            Date currentDate = DateAdministrator.currentDate();
-            senha.setDataCriacao(currentDate);
+            LocalDateTime dataHoraAtual = LocalDateTime.now();
+            senha.setDataCriacao(dataHoraAtual);
 
             passwordRepository.save(senha);
             return senha;
@@ -76,11 +72,11 @@ public class PasswordService {
 
     }
 
-    public SenhaModel findByGuidId(String idPass, String token) {
+    public SenhaModel findByGuidId(String idPass, String token) throws Exception {
         return passwordRepository.findByGuidId(idPass);
     }
 
-    public SenhaModel deleteById(String idPass, String token) {
+    public SenhaModel deleteById(String idPass, String token) throws Exception {
         SenhaModel senhaDelete = findByGuidId(idPass, token);
         passwordRepository.deleteById(idPass);
         return senhaDelete;
@@ -88,27 +84,26 @@ public class PasswordService {
 
     public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
         try {
-            Session.verifyToken(token);
             SenhaModel passwordAtt = findByGuidId(idSenha, token);
 
-            Date dateNow = DateAdministrator.currentDate();
+            LocalDateTime dataHoraAtual = LocalDateTime.now();
 
             if (!(data.getTitulo().isBlank() || data.getTitulo().isEmpty())) {
                 String upperTitulo = data.getTitulo().toUpperCase();
                 passwordAtt.setTitulo(upperTitulo);
-                passwordAtt.setDataAlteracao(dateNow);
+                passwordAtt.setDataAlteracao(dataHoraAtual);
             }
 
             if (!(data.getUserSite().isBlank() || data.getUserSite().isEmpty())) {
                 String upperUserSite = data.getUserSite().toUpperCase();
                 passwordAtt.setUserSite(upperUserSite);
-                passwordAtt.setDataAlteracao(dateNow);
+                passwordAtt.setDataAlteracao(dataHoraAtual);
             }
 
             if (!(data.getSenha().isBlank() || data.getSenha().isEmpty())) {
                 String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), token);
                 passwordAtt.setSenha(senhaEncri);
-                passwordAtt.setDataAlteracao(dateNow);
+                passwordAtt.setDataAlteracao(dataHoraAtual);
             }
 
             passwordRepository.save(passwordAtt);

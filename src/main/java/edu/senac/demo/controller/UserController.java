@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.senac.demo.Exceptions.TokenException;
 import edu.senac.demo.model.LoginModel;
 import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
@@ -32,6 +33,7 @@ public class UserController {
 
     @Autowired
     private UserService service;
+    private VerifySession verifySession;
 
     @ApiOperation(value = "Lista de usuarios")
     @GetMapping
@@ -63,9 +65,12 @@ public class UserController {
     public ResponseEntity<?> AlterarUser(@RequestHeader String idUser, @RequestBody UpdateUserModel data,
             @RequestHeader String token)
             throws Exception {
-
         try {
+
             return ResponseEntity.status(201).body(service.update(idUser, data, token));
+
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -80,10 +85,8 @@ public class UserController {
             if (!responseLogin.isValido())
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
-            Session.startSession();
-
-            responseLogin.setToken(Session.getToken());
             return ResponseEntity.status(200).body(responseLogin);
+
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
 
@@ -92,8 +95,10 @@ public class UserController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deletarUser(@RequestHeader String idUser, @RequestHeader String token) {
+    public ResponseEntity<?> deletarUser(@RequestHeader String idUser, @RequestHeader String token) throws Exception {
         try {
+            String key = service.findByGuidId(idUser).getKey();
+            verifySession.verifyToken(token, key);
             return ResponseEntity.status(200).body(service.deleteByGuidId(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

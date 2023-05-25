@@ -1,5 +1,6 @@
 package edu.senac.demo.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import edu.senac.demo.Exceptions.TokenException;
 import edu.senac.demo.model.SenhaModel;
 import edu.senac.demo.model.UpdatePasswordModel;
 import edu.senac.demo.service.PasswordService;
@@ -20,17 +23,19 @@ import edu.senac.demo.service.PasswordService;
 @RequestMapping(value = "/senhas")
 public class PasswordController {
 
+    @Autowired
     private PasswordService passwordService;
-
-    public PasswordController(PasswordService passwordService) {
-        this.passwordService = passwordService;
-    }
+    private VerifySession verifySession;
 
     @GetMapping("/senhasuser")
     public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
+
+            verifySession.verifyToken(token, token);
             return ResponseEntity.status(200).body(passwordService.findUserPasswords(idUser, token));
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -42,7 +47,10 @@ public class PasswordController {
             @RequestHeader String idUser)
             throws Exception {
         try {
+            verifySession.verifyToken(token, token);
             return ResponseEntity.status(201).body(passwordService.insert(senha, token, idUser));
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -50,10 +58,11 @@ public class PasswordController {
     }
 
     @GetMapping("/senha")
-    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String idSenha, @RequestHeader String token)
-            throws Exception {
+    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String idSenha, @RequestHeader String token) {
         try {
             return ResponseEntity.status(200).body(passwordService.findByGuidId(idSenha, token));
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -64,6 +73,8 @@ public class PasswordController {
     public ResponseEntity<?> deletarSenha(@RequestHeader String idSenha, @RequestHeader String token) {
         try {
             return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha, token));
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -75,6 +86,8 @@ public class PasswordController {
             throws Exception {
         try {
             return ResponseEntity.status(201).body(passwordService.updatePassword(idSenha, data, token));
+        } catch (TokenException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

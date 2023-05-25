@@ -1,7 +1,7 @@
 package edu.senac.demo.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,10 +34,10 @@ public class SenhaModel implements Serializable {
     private String userSite;
 
     @Column(name = "DATA_CRIACAO", nullable = false)
-    private Date dataCriacao;
+    private LocalDateTime dataCriacao;
 
     @Column(name = "DATA_ALTERACAO", nullable = true)
-    private Date dataAlteracao;
+    private LocalDateTime dataAlteracao;
 
     @Column(name = "ID_USER")
     private String fk_idUser;
