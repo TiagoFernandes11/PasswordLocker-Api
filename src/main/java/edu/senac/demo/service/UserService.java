@@ -58,15 +58,17 @@ public class UserService {
         return userRepository.save(obj);
     }
 
-    public UserModel findByEmail(String email) {
+    public UserModel findByEmail(String email) throws Exception {
         String emailUpper = email.toUpperCase();
-        return userRepository.findByEmail(emailUpper);
+        UserModel user = userRepository.findByEmail(emailUpper);
+        if (user == null)
+            throw new NullPointerException("Usuario inexistente");
+
+        return user;
     }
 
     public LoginModel login(String email, String senha) throws Exception {
         UserModel user = userRepository.findByEmail(email.toUpperCase());
-        if (user == null)
-            throw new NullPointerException("Usuario inexistente");
 
         LocalDateTime dataHoraAtual = LocalDateTime.now();
         String dataString = DateStringConverter.convert(dataHoraAtual);
