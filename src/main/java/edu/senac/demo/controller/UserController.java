@@ -43,7 +43,7 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws Exception {
         try {
-            return ResponseEntity.status(201).body(service.insert(user));
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.insert(user));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
@@ -75,7 +75,7 @@ public class UserController {
         try {
             String chaveUser = service.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
-            return ResponseEntity.status(201).body(service.update(idUser, data, token));
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.update(idUser, data, token));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -108,7 +108,7 @@ public class UserController {
             String chaveUser = service.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
 
-            return ResponseEntity.status(HttpStatus.OK).body(service.deleteByGuidId(idUser, token));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.deleteByGuidId(idUser, token));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

@@ -19,5 +19,5 @@ public interface UserRepository extends JpaRepository<UserModel, String>, JpaSpe
     public UserModel findByGuidId(@Param("idUser") final String idUser);
 
     @Query(value = DELETE_BY_ID, nativeQuery = true)
-    public boolean deleteByGuidId(@Param("idUser") final String idUser);
+    public void deleteByGuidId(@Param("idUser") final String idUser);
 }

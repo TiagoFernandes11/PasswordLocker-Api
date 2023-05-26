@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.senac.demo.model.SenhaModel;
+import edu.senac.demo.model.PasswordModel;
 import edu.senac.demo.model.UpdatePasswordModel;
 import edu.senac.demo.model.UserModel;
 
@@ -27,14 +27,14 @@ public class PasswordService {
         new BCryptPasswordEncoder();
     }
 
-    public ArrayList<SenhaModel> findUserPasswords(String idUser, String token) throws Exception {
+    public ArrayList<PasswordModel> findUserPasswords(String idUser, UserModel user) throws Exception {
         try {
-            List<SenhaModel> senhas = passwordRepository.findSenhasByIdUser(idUser);
+            List<PasswordModel> senhas = passwordRepository.findSenhasByIdUser(idUser);
 
-            ArrayList<SenhaModel> senhasDescript = new ArrayList<SenhaModel>();
-            for (SenhaModel senha : senhas) {
+            ArrayList<PasswordModel> senhasDescript = new ArrayList<PasswordModel>();
+            for (PasswordModel senha : senhas) {
                 String senhaDescript = senha.getSenha();
-                senhaDescript = EncryptionUtils.decryptData(senhaDescript, token);
+                senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey());
                 String semespacoNulo = TextTools.CheckNullField(senhaDescript);
                 senha.setSenha(semespacoNulo);
                 senhasDescript.add(senha);
@@ -48,21 +48,24 @@ public class PasswordService {
 
     }
 
-    public SenhaModel insert(SenhaModel senha, String token, String idUser) throws Exception {
+    public PasswordModel insert(PasswordModel senha, String token, String idUser) throws Exception {
         try {
 
             UserModel user = userRepository.findByGuidId(idUser);
             String titulo = senha.getTitulo().toUpperCase();
             senha.setTitulo(titulo);
 
-            String upperUserSite = senha.getUserSite().toUpperCase();
-            senha.setUserSite(upperUserSite);
+            if (senha.getUserSite() != null) {
+                String upperUserSite = senha.getUserSite().toUpperCase();
+                senha.setUserSite(upperUserSite);
+            }
 
             String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey());
             senha.setSenha(senhaEncri);
 
             LocalDateTime dataHoraAtual = LocalDateTime.now();
             senha.setDataCriacao(dataHoraAtual);
+            senha.setFk_idUser(idUser);
 
             passwordRepository.save(senha);
             return senha;
@@ -72,35 +75,35 @@ public class PasswordService {
 
     }
 
-    public SenhaModel findByGuidId(String idPass, String token) throws Exception {
+    public PasswordModel findByGuidId(String idPass, String token) throws Exception {
         return passwordRepository.findByGuidId(idPass);
     }
 
-    public SenhaModel deleteById(String idPass, String token) throws Exception {
-        SenhaModel senhaDelete = findByGuidId(idPass, token);
+    public PasswordModel deleteById(String idPass, String token) throws Exception {
+        PasswordModel senhaDelete = findByGuidId(idPass, token);
         passwordRepository.deleteById(idPass);
         return senhaDelete;
     }
 
-    public SenhaModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
+    public PasswordModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
         try {
-            SenhaModel passwordAtt = findByGuidId(idSenha, token);
+            PasswordModel passwordAtt = findByGuidId(idSenha, token);
 
             LocalDateTime dataHoraAtual = LocalDateTime.now();
 
-            if (!(data.getTitulo().isBlank() || data.getTitulo().isEmpty())) {
+            if (!(data.getTitulo() == null || data.getTitulo().isBlank() || data.getTitulo().isEmpty())) {
                 String upperTitulo = data.getTitulo().toUpperCase();
                 passwordAtt.setTitulo(upperTitulo);
                 passwordAtt.setDataAlteracao(dataHoraAtual);
             }
 
-            if (!(data.getUserSite().isBlank() || data.getUserSite().isEmpty())) {
+            if (!(data.getUserSite() == null || data.getUserSite().isBlank() || data.getUserSite().isEmpty())) {
                 String upperUserSite = data.getUserSite().toUpperCase();
                 passwordAtt.setUserSite(upperUserSite);
                 passwordAtt.setDataAlteracao(dataHoraAtual);
             }
 
-            if (!(data.getSenha().isBlank() || data.getSenha().isEmpty())) {
+            if (!(data.getSenha() == null || data.getSenha().isBlank() || data.getSenha().isEmpty())) {
                 String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), token);
                 passwordAtt.setSenha(senhaEncri);
                 passwordAtt.setDataAlteracao(dataHoraAtual);
@@ -114,14 +117,19 @@ public class PasswordService {
 
     }
 
-    public SenhaModel deletePassword(String id, String token) throws Exception {
-        SenhaModel senhaDeletado = passwordRepository.findByGuidId(id);
-        boolean deletado = passwordRepository.deleteByGuidId(id);
+    public PasswordModel deletePassword(String id, String token) throws Exception {
 
-        if (!deletado)
-            throw new Exception("Algo deu errado ao deletar senha");
+        PasswordModel senhaDeletada = passwordRepository.findByGuidId(id);
+        if (senhaDeletada == null)
+            throw new NullPointerException("Senha inexistente");
 
-        return senhaDeletado;
+        try {
+            passwordRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new Exception("Algo deu errado ao deletar senha: " + e.getMessage());
+        }
+
+        return senhaDeletada;
     }
 
 }

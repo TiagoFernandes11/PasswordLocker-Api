@@ -32,7 +32,11 @@ public class UserService {
     }
 
     public UserModel findByGuidId(String idUser) {
+
         UserModel obj = userRepository.findByGuidId(idUser);
+        if (obj == null)
+            throw new NullPointerException("Usuario inexistente");
+
         return obj;
     }
 
@@ -101,6 +105,8 @@ public class UserService {
     }
 
     private void updateData(UserModel entity, UpdateUserModel obj) {
+        LocalDateTime dataAtual = LocalDateTime.now();
+
         if (!(obj.getNome().isEmpty() || obj.getNome().isBlank()))
             entity.setNome(obj.getNome().toUpperCase());
 
@@ -112,16 +118,22 @@ public class UserService {
 
         if (!(obj.getSenha().isEmpty() || obj.getSenha().isBlank()))
             entity.setSenha(obj.getSenha());
+
+        entity.setDataAlteracao(dataAtual);
+
     }
 
     public UserModel deleteByGuidId(String idUser, String token) throws Exception {
+
         UserModel userDeletado = userRepository.findByGuidId(idUser);
         if (userDeletado == null)
             throw new NullPointerException("Usuario inexistente");
 
-        boolean deltedUser = userRepository.deleteByGuidId(idUser);
-        if (!deltedUser)
-            throw new Exception("Algo deu errado a deletar usuario");
+        try {
+            userRepository.deleteById(idUser);
+        } catch (Exception e) {
+            throw new Exception("Algo deu errado ao deletar usuario: " + e.getMessage());
+        }
 
         return userDeletado;
     }

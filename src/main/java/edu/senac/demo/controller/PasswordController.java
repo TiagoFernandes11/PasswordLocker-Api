@@ -1,8 +1,11 @@
 package edu.senac.demo.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.web.server.ServerHttpSecurity.HttpsRedirectSpec;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import edu.senac.demo.Exceptions.TokenException;
-import edu.senac.demo.model.SenhaModel;
+import edu.senac.demo.model.PasswordModel;
 import edu.senac.demo.model.UpdatePasswordModel;
+import edu.senac.demo.model.UserModel;
 import edu.senac.demo.service.PasswordService;
 import edu.senac.demo.service.UserService;
 
@@ -26,14 +30,17 @@ public class PasswordController {
 
     @Autowired
     private PasswordService passwordService;
+    @Autowired
     private UserService userService;
 
     @GetMapping("/senhasuser")
     public ResponseEntity<?> listarSenhasUsuario(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
-            VerifySession.verifyToken(token, idUser);
-            return ResponseEntity.status(200).body(passwordService.findUserPasswords(idUser, token));
+
+            UserModel user = userService.findByGuidId(idUser);
+            VerifySession.verifyToken(token, user.getKey());
+            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findUserPasswords(idUser, user));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -44,13 +51,13 @@ public class PasswordController {
     }
 
     @PostMapping
-    public ResponseEntity<?> cadastrarSenha(@RequestHeader String idUser, @RequestBody SenhaModel senha,
+    public ResponseEntity<?> cadastrarSenha(@RequestHeader String idUser, @RequestBody PasswordModel senha,
             @RequestHeader String token)
             throws Exception {
         try {
             String chaveUser = userService.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
-            return ResponseEntity.status(201).body(passwordService.insert(senha, token, idUser));
+            return ResponseEntity.status(HttpStatus.CREATED).body(passwordService.insert(senha, token, idUser));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -61,13 +68,13 @@ public class PasswordController {
     }
 
     @GetMapping("/senha")
-    public ResponseEntity<?> listarSenhasPorId(@RequestHeader String idUser, @RequestHeader String idSenha,
+    public ResponseEntity<?> buscarSenhasPorId(@RequestHeader String idUser, @RequestHeader String idSenha,
             @RequestHeader String token) {
         try {
             String chaveUser = userService.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
 
-            return ResponseEntity.status(200).body(passwordService.findByGuidId(idSenha, token));
+            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findByGuidId(idSenha, token));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -79,12 +86,12 @@ public class PasswordController {
 
     @DeleteMapping
     public ResponseEntity<?> deletarSenha(@RequestHeader String idUser, @RequestHeader String idSenha,
-            @RequestHeader String token) {
+            @RequestHeader String token) throws Exception {
         try {
             String chaveUser = userService.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
 
-            return ResponseEntity.status(200).body(passwordService.deletePassword(idSenha, token));
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(passwordService.deletePassword(idSenha, token));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -101,7 +108,7 @@ public class PasswordController {
         try {
             String chaveUser = userService.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
-            return ResponseEntity.status(201).body(passwordService.updatePassword(idSenha, data, token));
+            return ResponseEntity.status(HttpStatus.CREATED).body(passwordService.updatePassword(idSenha, data, token));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -113,11 +120,13 @@ public class PasswordController {
     @GetMapping("/qntSenhas")
     public ResponseEntity<?> buscarQntSenhas(@RequestHeader String idUser, @RequestHeader String token) {
         try {
-            String chaveUser = userService.findByGuidId(idUser).getKey();
-            VerifySession.verifyToken(token, chaveUser);
+            UserModel user = userService.findByGuidId(idUser);
+            VerifySession.verifyToken(token, user.getKey());
 
-            int qntSenhas = 0;
-            return ResponseEntity.status(200).body(qntSenhas);
+            List<PasswordModel> senhas = passwordService.findUserPasswords(idUser, user);
+            int qntSenhas = senhas.size();
+
+            return ResponseEntity.status(HttpStatus.OK).body(qntSenhas);
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         } catch (Exception e) {

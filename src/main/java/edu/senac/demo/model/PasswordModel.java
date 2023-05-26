@@ -15,7 +15,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "TB_SENHA")
-public class SenhaModel implements Serializable {
+public class PasswordModel implements Serializable {
 
     @Id
     @GeneratedValue(generator = "uuid2")
