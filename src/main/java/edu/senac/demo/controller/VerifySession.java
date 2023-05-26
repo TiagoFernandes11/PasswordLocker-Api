@@ -18,7 +18,7 @@ public class VerifySession {
 
         Duration duracao = Duration.between(dataAtual, dataToken);
 
-        boolean passou = duracao.toMinutes() < -15;
+        boolean passou = duracao.toMinutes() < -120;
         if (passou) {
             throw new TokenException("Token expirado");
         }
