@@ -40,6 +40,18 @@ public class UserController {
         return ResponseEntity.ok().body(service.findAll());
     }
 
+    @GetMapping("/userid")
+    public ResponseEntity<?> buscarUserPorId(@RequestHeader String userId, @RequestHeader String token)
+            throws Exception {
+        try {
+            VerifySession.verifyToken(token, userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.findByGuidId(userId));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+
+    }
+
     @PostMapping
     public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws Exception {
         try {
