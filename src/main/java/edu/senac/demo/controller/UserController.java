@@ -41,11 +41,11 @@ public class UserController {
     }
 
     @GetMapping("/userid")
-    public ResponseEntity<?> buscarUserPorId(@RequestHeader String userId, @RequestHeader String token)
+    public ResponseEntity<?> buscarUserPorId(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
-            VerifySession.verifyToken(token, userId);
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.findByGuidId(userId));
+            VerifySession.verifyToken(token, idUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(service.findByGuidId(idUser));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
