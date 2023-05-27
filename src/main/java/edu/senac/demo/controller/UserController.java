@@ -36,11 +36,13 @@ public class UserController {
         return ResponseEntity.ok().body(service.findAll());
     }
 
+    @ApiOperation(value="Retorna usuario cadastrado")
     @PostMapping
     public ResponseEntity<?> cadastrarUsuario(@Valid @RequestBody UserModel user) throws ParseException {
         return ResponseEntity.status(201).body(service.insert(user));
     }
 
+    @ApiOperation(value="Busca Usuario por email")
     @GetMapping("usuario")
     public ResponseEntity<UserModel> buscarUsuarioPorEmail(@RequestHeader String email) {
         UserModel user = service.findByEmail(email);
@@ -51,6 +53,7 @@ public class UserController {
         return ResponseEntity.status(200).body(user);
     }
 
+    @ApiOperation(value="Validar Login")
     @PostMapping("/login")
     public ResponseEntity<?> validarLogin(@RequestHeader String usario, @RequestHeader String senha) {
         boolean isValido = service.login(usario, senha);
