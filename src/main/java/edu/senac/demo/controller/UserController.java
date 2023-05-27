@@ -44,8 +44,9 @@ public class UserController {
     public ResponseEntity<?> buscarUserPorId(@RequestHeader String idUser, @RequestHeader String token)
             throws Exception {
         try {
-            VerifySession.verifyToken(token, idUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(service.findByGuidId(idUser));
+            UserModel user = service.findByGuidId(idUser);
+            VerifySession.verifyToken(token, user.getKey());
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
