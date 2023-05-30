@@ -34,6 +34,7 @@ public class UserService {
     public UserModel findByGuidId(String idUser) {
 
         UserModel obj = userRepository.findByGuidId(idUser);
+
         if (obj == null)
             throw new NullPointerException("Usuario inexistente");
 

@@ -70,10 +70,10 @@ public class PasswordController {
     public ResponseEntity<?> buscarSenhasPorId(@RequestHeader String idUser, @RequestHeader String idSenha,
             @RequestHeader String token) {
         try {
-            String chaveUser = userService.findByGuidId(idUser).getKey();
-            VerifySession.verifyToken(token, chaveUser);
+            UserModel user = userService.findByGuidId(idUser);
+            VerifySession.verifyToken(token, user.getKey());
 
-            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findByGuidId(idSenha, token));
+            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findByGuidId(user, idSenha, token));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

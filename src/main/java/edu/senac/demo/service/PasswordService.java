@@ -34,7 +34,7 @@ public class PasswordService {
             ArrayList<PasswordModel> senhasDescript = new ArrayList<PasswordModel>();
             for (PasswordModel senha : senhas) {
                 String senhaDescript = senha.getSenha();
-                senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey());
+                senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey().toString());
                 String semespacoNulo = TextTools.CheckNullField(senhaDescript);
                 senha.setSenha(semespacoNulo);
                 senhasDescript.add(senha);
@@ -77,6 +77,17 @@ public class PasswordService {
 
     public PasswordModel findByGuidId(String idPass, String token) throws Exception {
         return passwordRepository.findByGuidId(idPass);
+    }
+
+    public PasswordModel findByGuidId(UserModel user, String idPass, String token) throws Exception {
+
+        PasswordModel senha = passwordRepository.findByGuidId(idPass);
+        String senhaDescript = senha.getSenha();
+        senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey());
+
+        senha.setSenha(TextTools.CheckNullField(senhaDescript));
+
+        return senha;
     }
 
     public PasswordModel deleteById(String idPass, String token) throws Exception {
