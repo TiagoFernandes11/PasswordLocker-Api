@@ -51,14 +51,14 @@ public class UserService {
         String upperNome = obj.getNome().toUpperCase();
         String enconder = this.passwordEncoder.encode(obj.getSenha());
         LocalDateTime dataHoraAtual = LocalDateTime.now();
-        String key = EncryptionUtils.generateBase64EncodedKey();
+        String generatekey = EncryptionUtils.generateRdnToken();
 
         obj.setEmail(upperEmail);
         obj.setNome(upperNome);
         obj.setTelefone(obj.getTelefone());
         obj.setSenha(enconder);
         obj.setDataCriacao(dataHoraAtual);
-        obj.setKey(key);
+        obj.setKey(generatekey);
 
         return userRepository.save(obj);
     }

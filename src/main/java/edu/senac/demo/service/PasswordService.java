@@ -60,7 +60,7 @@ public class PasswordService {
                 senha.setUserSite(upperUserSite);
             }
 
-            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey());
+            String senhaEncri = EncryptionUtils.encryptData(senha.getSenha(), user.getKey().toString());
             senha.setSenha(senhaEncri);
 
             LocalDateTime dataHoraAtual = LocalDateTime.now();
@@ -83,7 +83,7 @@ public class PasswordService {
 
         PasswordModel senha = passwordRepository.findByGuidId(idPass);
         String senhaDescript = senha.getSenha();
-        senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey());
+        senhaDescript = EncryptionUtils.decryptData(senhaDescript, user.getKey().toString());
 
         senha.setSenha(TextTools.CheckNullField(senhaDescript));
 
