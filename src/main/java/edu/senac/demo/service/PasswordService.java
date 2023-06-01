@@ -75,11 +75,7 @@ public class PasswordService {
 
     }
 
-    public PasswordModel findByGuidId(String idPass, String token) throws Exception {
-        return passwordRepository.findByGuidId(idPass);
-    }
-
-    public PasswordModel findByGuidId(UserModel user, String idPass, String token) throws Exception {
+    public PasswordModel findByGuidId(UserModel user, String idPass) throws Exception {
 
         PasswordModel senha = passwordRepository.findByGuidId(idPass);
         String senhaDescript = senha.getSenha();
@@ -90,15 +86,18 @@ public class PasswordService {
         return senha;
     }
 
-    public PasswordModel deleteById(String idPass, String token) throws Exception {
-        PasswordModel senhaDelete = findByGuidId(idPass, token);
+    public PasswordModel deleteById(String idPass, String idUser, String token) throws Exception {
+        UserModel user = userRepository.findByGuidId(idUser);
+        PasswordModel senhaDelete = findByGuidId(user, idPass);
         passwordRepository.deleteById(idPass);
         return senhaDelete;
     }
 
-    public PasswordModel updatePassword(String idSenha, UpdatePasswordModel data, String token) throws Exception {
+    public PasswordModel updatePassword(String idSenha, String idUser, UpdatePasswordModel data)
+            throws Exception {
         try {
-            PasswordModel passwordAtt = findByGuidId(idSenha, token);
+            UserModel user = userRepository.findByGuidId(idUser);
+            PasswordModel passwordAtt = findByGuidId(user, idSenha);
 
             LocalDateTime dataHoraAtual = LocalDateTime.now();
 
@@ -115,7 +114,7 @@ public class PasswordService {
             }
 
             if (!(data.getSenha() == null || data.getSenha().isBlank() || data.getSenha().isEmpty())) {
-                String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), token);
+                String senhaEncri = EncryptionUtils.encryptData(data.getSenha(), user.getKey());
                 passwordAtt.setSenha(senhaEncri);
                 passwordAtt.setDataAlteracao(dataHoraAtual);
             }

@@ -73,7 +73,7 @@ public class PasswordController {
             UserModel user = userService.findByGuidId(idUser);
             VerifySession.verifyToken(token, user.getKey());
 
-            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findByGuidId(user, idSenha, token));
+            return ResponseEntity.status(HttpStatus.OK).body(passwordService.findByGuidId(user, idSenha));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -107,7 +107,8 @@ public class PasswordController {
         try {
             String chaveUser = userService.findByGuidId(idUser).getKey();
             VerifySession.verifyToken(token, chaveUser);
-            return ResponseEntity.status(HttpStatus.CREATED).body(passwordService.updatePassword(idSenha, data, token));
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(passwordService.updatePassword(idSenha, idUser, data));
 
         } catch (TokenException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
