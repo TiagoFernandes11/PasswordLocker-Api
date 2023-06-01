@@ -19,6 +19,8 @@ public class EncryptionUtils {
 
     private static final int KEY_SIZE = 256; // Tamanho da chave em bits
     private static final int IV_SIZE = 16; // Tamanho do vetor de inicialização em bytes
+    private static final int TOKEN_LENGTH = 24;
+    private static final String ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
     private static byte[] generateKey() throws NoSuchAlgorithmException {
         KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
@@ -77,4 +79,16 @@ public class EncryptionUtils {
         return new SecretKeySpec(decodedKey, "AES");
     }
 
+    public static String generateRdnToken() {
+        StringBuilder token = new StringBuilder(TOKEN_LENGTH);
+
+        SecureRandom secureRandom = new SecureRandom();
+        for (int i = 0; i < TOKEN_LENGTH; i++) {
+            int randomIndex = secureRandom.nextInt(ALLOWED_CHARACTERS.length());
+            char randomChar = ALLOWED_CHARACTERS.charAt(randomIndex);
+            token.append(randomChar);
+        }
+
+        return token.toString();
+    }
 }
