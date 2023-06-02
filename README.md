@@ -2,7 +2,7 @@
 
 ## O que é o PasswordLocker?
 
-​	é um site desenvolvido para armazenar senhas, com o intuito de aprender mais sobre tecnologias mais de "Base" com html, css, javaScript para front e  Java e MySQL para back e também explorar o mundo dos frameworks e criptografias que no nosso caso estamos criptografando nosso dados com um Base64 com a forma de criptografia AES (Advanced Encryption Standard) que é um tipo de criptografia que usa a mesma chave para criptografar e descriptografar os dados.
+​	é um site desenvolvido para armazenamento de senhas, com o intuito de aprender mais sobre tecnologias mais de "Base" com html, css, javaScript para front e  Java e MySQL para back e também explorar o mundo dos frameworks e criptografias que no nosso caso estamos criptografando nosso dados com um Base64 com a forma de criptografia AES (Advanced Encryption Standard) que é um tipo de criptografia que usa a mesma chave para criptografar e descriptografar os dados.
 
 ​	Este repositório se trata do backend de nosso projeto, o frontend pode ser encontrado neste <a href = "https://github.com/maricsouza/PI-Password-Locker">repositório.</a>
 
