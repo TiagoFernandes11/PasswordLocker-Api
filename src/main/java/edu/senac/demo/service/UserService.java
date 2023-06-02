@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import edu.senac.demo.model.LoginModel;
+import edu.senac.demo.model.PasswordModel;
 import edu.senac.demo.model.UpdateUserModel;
 import edu.senac.demo.model.UserModel;
 import edu.senac.demo.repository.UserRepository;
@@ -20,10 +21,12 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    private PasswordService passwordService;
     private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordService passwordService) {
         this.userRepository = userRepository;
+        this.passwordService = passwordService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -127,6 +130,13 @@ public class UserService {
     public UserModel deleteByGuidId(String idUser, String token) throws Exception {
 
         UserModel userDeletado = userRepository.findByGuidId(idUser);
+        List<PasswordModel> listaSenhas = passwordService.findUserPasswords(idUser, userDeletado);
+
+        for (PasswordModel passwordModel : listaSenhas) {
+
+            passwordService.deleteById(passwordModel.getIdSenha(), idUser, token);
+        }
+
         if (userDeletado == null)
             throw new NullPointerException("Usuario inexistente");
 
