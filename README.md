@@ -103,3 +103,10 @@ Apos clicar em import vá é cole o link Link<br>
 e ele ira importar automaticamente(nas versoes mais atuais)
 E pronto a collection está em seu postman agora é só testar a vontade<br>
 ![image](https://github.com/TiagoFernandes11/PasswordLocker-Api/assets/81272272/76acc9ce-c6ee-40e3-a6ce-c66d8bd489c0)
+
+## Envolvidos no back-end
+- Tiago Fernandes<a href="https://www.linkedin.com/in/tiago-fernandes-ribeiro-03074815a/">💼Linkedin</a> <a href ="https://github.com/TiagoFernandes11">👩‍💻Github</a> 
+
+- Nathalia da Rocha Santos<a href="">💼Linkedin</a> <a href ="https://github.com/NathaliadaRocha07">👩‍💻Github</a>
+
+- Raian Medeiros Nolaço<a href="https://www.linkedin.com/in/raiannolaço/">💼Linkedin</a> <a href ="https://github.com/RaianNolaco?tab=repositories">👨‍💻Github</a>
